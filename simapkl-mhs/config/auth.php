@@ -40,6 +40,18 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'mahasiswa' => [
+            'driver' => 'session',
+            'provider' => 'mahasiswas',
+        ],
+        'dospem' => [
+            'driver' => 'session',
+            'provider' => 'dospems',
+        ],
+        'perusahaan' => [
+            'driver' => 'session',
+            'provider' => 'perusahaans',
+        ],
     ],
 
     /*
@@ -69,6 +81,18 @@ return [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
+        'mahasiswas' => [
+            'driver' => 'database',
+            'table' => 'mahasiswas',
+        ],
+        'perusahaans' => [
+            'driver' => 'database',
+            'table' => 'perusahaans',
+        ],
+        'dospems' => [
+            'driver' => 'database',
+            'table' => 'dospems',
+        ],
     ],
 
     /*

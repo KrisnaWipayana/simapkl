@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dospem', function (Blueprint $table) {
+        Schema::create('prodis', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('mahasiswa_id')->constrained()->onDelete('cascade')->nullable();
-            $table->foreignId('dosen_id')->constrained()->onDelete('cascade');
+            $table->string('nama');
+            $table->foreignId('jurusan_id')->constrained('jurusans')->onDelete('cascade');
             $table->timestamps();
         });
+
     }
 
     /**
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('prodis');
     }
 };
