@@ -14,8 +14,8 @@ return [
     */
 
     'defaults' => [
-        'guard' => env('AUTH_GUARD', 'web'),
-        'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
+        'guard' => env('AUTH_GUARD', 'mahasiswa'),
+        // 'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
     /*
@@ -36,21 +36,21 @@ return [
     */
 
     'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
+        // 'web' => [
+        //     'driver' => 'session',
+        //     'provider' => 'users',
+        // ],
         'mahasiswa' => [
             'driver' => 'session',
-            'provider' => 'mahasiswas',
+            'provider' => 'mahasiswa',
         ],
         'dospem' => [
             'driver' => 'session',
-            'provider' => 'dospems',
+            'provider' => 'dospem',
         ],
         'perusahaan' => [
             'driver' => 'session',
-            'provider' => 'perusahaans',
+            'provider' => 'perusahaan',
         ],
     ],
 
@@ -72,26 +72,29 @@ return [
     */
 
     'providers' => [
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
-        ],
+        // 'users' => [
+        //     'driver' => 'eloquent',
+        //     'model' => env('AUTH_MODEL', App\Models\User::class),
+        // ],
 
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
-        'mahasiswas' => [
-            'driver' => 'database',
+        'mahasiswa' => [
+            'driver' => 'eloquent',
             'table' => 'mahasiswas',
+            'model' => env('AUTH_MODEL', App\Models\Mahasiswa::class)
         ],
-        'perusahaans' => [
-            'driver' => 'database',
+        'perusahaan' => [
+            'driver' => 'eloquent',
             'table' => 'perusahaans',
+            'model' => env('AUTH_MODEL', App\Models\Perusahaan::class)
         ],
-        'dospems' => [
-            'driver' => 'database',
+        'dospem' => [
+            'driver' => 'eloquent',
             'table' => 'dospems',
+            'model' => env('AUTH_MODEL', App\Models\Dospem::class)
         ],
     ],
 
@@ -115,12 +118,12 @@ return [
     */
 
     'passwords' => [
-        'users' => [
-            'provider' => 'users',
-            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
-            'expire' => 60,
-            'throttle' => 60,
-        ],
+        // 'users' => [
+        //     'provider' => 'users',
+        //     'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+        //     'expire' => 60,
+        //     'throttle' => 60,
+        // ],
     ],
 
     /*

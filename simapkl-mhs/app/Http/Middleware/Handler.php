@@ -10,7 +10,7 @@ class Handler
 {
     public function handle(Request $request, Closure $next, $guard = null)
     {
-        if (!Auth::guard($guard)->check()) {
+        if (!Auth::guard('mahasiswa')->check()) {
             // Redirect ke halaman login jika belum login
             return redirect()->route('welcome');
         }

@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
-class Mahasiswa extends Model
+class Mahasiswa extends Authenticatable
 {
+
     protected $fillable = [
         'nim',
         'nama',
@@ -15,4 +17,10 @@ class Mahasiswa extends Model
         'prodi_id',
         'jurusan_id',
     ];
+
+    protected $hidden = [
+        'password',
+    ];
+
+    protected $table = 'mahasiswas';
 }

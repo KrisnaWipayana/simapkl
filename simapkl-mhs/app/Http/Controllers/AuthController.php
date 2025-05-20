@@ -1,6 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\Mahasiswa;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
  public function showLoginMhs()
@@ -18,23 +23,27 @@ public function showLoginPerusahaan()
         return view('auth.loginPerusahaan');
     }
 
- public function loginMhs()
+ public function loginMhs(Request $request)
     {
-        $credentials = request()->only('nim', 'password');
+        $request->validate([
+            'nim'    => 'required|string',
+            'password' => 'required|min:6',
+        ]);
 
-        if (auth('mahasiswa')->attempt($credentials)) {
-            return redirect()->intended(route('dashboard.mahasiswa'));
+        $credentials = Mahasiswa::where('nim', $request->nim)->first();
+
+        if (!$credentials || !Hash::check($request->password, $credentials->password)) {
+            return back()->with('fail', 'NIM atau Password salah.');
         }
 
-        return back()->withErrors([
-            'nim' => 'The provided credentials do not match our records.',
-        ]);
+        Auth::guard('mahasiswa')->login($credentials);
+        return redirect()->intended('/dashboard/mahasiswa');
     }
 
  public function loginDospem()
     {
         $credentials = request()->only('nip', 'password');
-
+        
         if (auth()->attempt($credentials)) {
             return redirect()->intended('/dashboard/dospem');
         }
