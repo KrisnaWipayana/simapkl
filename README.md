@@ -1,2 +1,0 @@
-# simapkl
-Final Academic Project
