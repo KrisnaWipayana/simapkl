@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('mahasiswa_id')->constrained('mahasiswas')->onDelete('cascade');
             $table->string('judul_laporan');
             $table->text('deskripsi_laporan');
-            $table->date('status_laporan')->nullable();
+            $table->string('status_laporan')->nullable();
             $table->timestamps();
         });
 

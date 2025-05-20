@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class berkas extends Seeder
+class Berkas extends Seeder
 {  
     public function run(): void
     {
@@ -14,7 +14,7 @@ class berkas extends Seeder
             'mahasiswa_id' => 1,
             'judul_laporan' => 'Laporan Mingguan 1',
             'deskripsi_laporan' => 'Deskripsi laporan mingguan pertama.',
-            'status_laporan' => now(),
+            'status_laporan' => 'Diterima',
             'created_at' => now(),
             'updated_at' => now(),
         ]);

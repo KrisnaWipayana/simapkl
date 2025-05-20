@@ -78,9 +78,8 @@ Route::post('/logout/perusahaan', function () {
 
 Route::prefix('dashboard')->group(function () {
         Route::middleware('auth:mahasiswa')->group(function () {
-            Route::get('/mahasiswa', function () {
-                return view('dashboard.mahasiswa');
-            })->name('dashboard.mahasiswa');
+            Route::get('/mahasiswa',[MahasiswaController::class, 'index'])
+            ->name('dashboard.mahasiswa'); 
         });
 
         Route::middleware('auth:dospem')->group(function () {
