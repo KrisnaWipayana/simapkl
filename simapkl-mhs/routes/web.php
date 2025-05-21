@@ -80,6 +80,9 @@ Route::prefix('dashboard')->group(function () {
         Route::middleware('auth:mahasiswa')->group(function () {
             Route::get('/mahasiswa',[MahasiswaController::class, 'index'])
             ->name('dashboard.mahasiswa'); 
+
+            Route::get('/mahasiswa/lowongan/{id}', [MahasiswaController::class, 'lowonganDetails'])
+            ->name('dashboard.lowongan.details');
         });
 
         Route::middleware('auth:dospem')->group(function () {
