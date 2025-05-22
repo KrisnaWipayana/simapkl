@@ -7,6 +7,7 @@ use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class MahasiswaController extends Controller
 {
@@ -50,5 +51,32 @@ class MahasiswaController extends Controller
         ->first();
 
         return view('dashboard.lowongan-details', compact('lowongan'));
+    }
+
+    public function uploadCV(Request $request)
+    {
+        $request->validate([
+            'cv' => 'required|file|mimes:pdf,doc,docx|max:10240', // 10MB max
+        ]); 
+
+        $user = Auth::guard('mahasiswa')->user();
+
+        // Delete old CV if exists
+        if ($user->cv) {
+            Storage::delete('public/cvs/' . $user->cv->file_cv);
+        }
+
+        // Store new CV
+        $file = $request->file('cv');
+        $fileName = 'cv_' . $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+        $filePath = $file->storeAs('public/cvs', $fileName);
+
+        // Update or create CV record
+        $user->cv()->updateOrCreate(
+            ['mahasiswa_id' => $user->id],
+            ['file_cv' => $fileName]
+        );
+
+        return response()->json(['success' => true, 'message' => 'CV berhasil diupload!']);
     }
 }

@@ -23,4 +23,9 @@ class Mahasiswa extends Authenticatable
     ];
 
     protected $table = 'mahasiswas';
+
+    public function cv()
+{
+    return $this->hasOne(CV::class);
+}
 }

@@ -12,8 +12,7 @@ Route::get('/', function () {
 
 Route::get('/', function () {
     return view('welcome');
-})->name('login')
-;
+})->name('login');
 
 // Group dengan prefix 'login'
 Route::prefix('login')->group(function () {
@@ -83,6 +82,9 @@ Route::prefix('dashboard')->group(function () {
 
             Route::get('/mahasiswa/lowongan/{id}', [MahasiswaController::class, 'lowonganDetails'])
             ->name('dashboard.lowongan.details');
+
+            //  Route::get('/upload-cv', [MahasiswaController::class, 'showUploadForm'])->name('cv.upload.form');
+            Route::post('/upload-cv', [MahasiswaController::class, 'uploadCV'])->name('cv.upload');
         });
 
         Route::middleware('auth:dospem')->group(function () {

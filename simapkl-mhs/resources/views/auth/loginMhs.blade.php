@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Mahasiswa</title>
+    <title>SIMAPKL - LOGIN</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .card {
@@ -41,11 +41,19 @@
                     <button class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md mt-4">
                         Lanjutkan
                     </button>
+                    <a href="">
+                    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md mt-4">
+                        Daftar
+                    </button>
+                    </a>
                 </div>
             </form>
         </div>
         <div class="bg-gray-50 px-8 py-4 border-t border-gray-200 text-center">
             <a href="#" class="text-sm text-black-600 hover:text-blue-500">Lupa password?</a>
+        </div>
+        <div class="bg-gray-50 px-8 py-4 text-center">
+            <a href="{{ route('login') }}" class="text-sm text-black-600 font-sans hover:text-blue-500">Kembali</a>
         </div>
     </div>
 </body>
