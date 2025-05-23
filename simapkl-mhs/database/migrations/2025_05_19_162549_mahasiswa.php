@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('foto')->nullable();
             $table->foreignId('prodi_id')->constrained('prodis')->onDelete('cascade');
             $table->foreignId('jurusan_id')->constrained('jurusans')->onDelete('cascade');
+            $table->foreignId('perusahaan_id')->constrained('perusahaans')->onDelete('cascade');
+            $table->foreignId('lowongan_id')->constrained('lowongans')->onDelete('cascade');
             // $table->unsignedBigInteger('dospem_id')->nullable()->constrained()->onDelete('cascade');
             // $table->foreign('dospem_id')->references('id')->on('dospems')->onDelete('cascade');
             $table->timestamps();

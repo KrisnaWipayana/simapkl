@@ -18,3 +18,9 @@ Perlu beberapa tools agar SIMAPKL bisa berjalan dengan baik, berikut adalah tool
 - [Composer](https://getcomposer.org/download/).
 - [Git] Opsional (https://git-scm.com/downloads).
 - NPM (Perlu diinstall di dalam terminal).
+
+
+Command setup:
+
+- npm install
+- php artisan generate:key

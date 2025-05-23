@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\DospemContoller;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\PerusahaanController;
@@ -82,6 +83,9 @@ Route::prefix('dashboard')->group(function () {
 
             Route::get('/mahasiswa/lowongan/{id}', [MahasiswaController::class, 'lowonganDetails'])
             ->name('dashboard.lowongan.details');
+
+            Route::get('/mahasiswa/profile', [MahasiswaController::class,'profileMahasiswa'])
+            ->name('dashboard.profile.mhs');
 
             //  Route::get('/upload-cv', [MahasiswaController::class, 'showUploadForm'])->name('cv.upload.form');
             Route::post('/upload-cv', [MahasiswaController::class, 'uploadCV'])->name('cv.upload');

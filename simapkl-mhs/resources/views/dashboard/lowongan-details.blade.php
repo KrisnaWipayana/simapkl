@@ -6,9 +6,22 @@
 
 @section('content')
     <div class="flex-1 overflow-auto p-4">
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+        <div id="alert" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 transition-all duration-500 ease-in-out transform translate-y-0 opacity-100">
+            <div class="flex justify-between items-center">
+                <h2 class="text-sm lg:text-lg font-sans font-semibold">Persiapkan data kamu sebelum melamar magang ya.</h2>
+                <button id = "closeAlertBtn" class="text-gray-500 dark:text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+            <p class="text-sm font-sans">Persiapkan data kamu sebelum melamar magang ya.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
             <!-- Container Informasi Perusahaan dan Lowongan (3/4) -->
-            <div class="lg:col-span-3">
+            <div class="lg:col-span-3 mt-4">
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
                     <!-- Header Lowongan -->
                     <div class="p-6 border-b border-gray-200 dark:border-gray-700">
@@ -120,7 +133,7 @@
             </div>
 
             <!-- Container Profile User (1/4) -->
-            <div class="lg:col-span-1">
+            <div class="lg:col-span-1 mt-4 hidden lg:block">
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 sticky">
                     <!-- Profile Header -->
                     <div class="text-center mb-6">
