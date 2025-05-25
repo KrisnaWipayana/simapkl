@@ -18,28 +18,35 @@ class MahasiswaController extends Controller
     {
         $mahasiswa = Mahasiswa::all();
         $lowongan = DB::table('lowongans')
-        ->join('perusahaans', 'lowongans.perusahaan_id', '=', 'perusahaans.id')
-        ->select(
-            'lowongans.*',
-            'perusahaans.nama as nama_perusahaan',
-            'perusahaans.alamat as alamat_perusahaan')
-        ->get();
+            ->join('perusahaans', 'lowongans.perusahaan_id', '=', 'perusahaans.id')
+            ->select(
+                'lowongans.*',
+                'perusahaans.nama as nama_perusahaan',
+                'perusahaans.alamat as alamat_perusahaan'
+            )
+            ->get();
+
+        // Ambil semua skill untuk setiap lowongan
+        $skillLowonganMap = [];
+        foreach ($lowongan as $lwg) {
+            $skills = DB::table('lowongan_skill')
+                ->join('skills', 'lowongan_skill.skill_id', '=', 'skills.id')
+                ->where('lowongan_skill.lowongan_id', $lwg->id)
+                ->pluck('skills.nama');
+            $skillLowonganMap[$lwg->id] = $skills;
+        }
 
         $mahasiswaId = Auth::guard('mahasiswa')->user()->id;
 
-        $perusahaan = DB::table('perusahaan');
-
         $laporanMingguan = DB::table('laporan_mingguan')
-        ->where('mahasiswa_id', $mahasiswaId)
-        ->get();
+            ->where('mahasiswa_id', $mahasiswaId)
+            ->get();
 
-        
-        $laporanAkhir = DB::table('laporan_akhir')->where('mahasiswa_id', $request->session()->get('mahasiswa_id'))->get();
-        // $laporanAkhir = DB::table('laporan_akhir')->get();
+        $laporanAkhir = DB::table('laporan_akhir')->where('mahasiswa_id', $mahasiswaId)->get();
         $cv = DB::table('cv')->get();
 
-        // Mengembalikan view dengan data mahasiswa
-        return view('dashboard.mahasiswa', compact('laporanMingguan', 'laporanAkhir', 'mahasiswa', 'cv', 'lowongan'));
+        // Kirim $skillLowonganMap ke view
+        return view('dashboard.mahasiswa', compact('laporanMingguan', 'laporanAkhir', 'mahasiswa', 'cv', 'lowongan', 'skillLowonganMap'));
     }
 
     function lowonganDetails(Request $request) 
@@ -53,7 +60,19 @@ class MahasiswaController extends Controller
         ->where('lowongans.id', $request->id)
         ->first();
 
-        return view('dashboard.lowongan-details', compact('lowongan'));
+        $mahasiswaId = Auth::guard('mahasiswa')->user()->id;
+        $skillMahasiswa = DB::table('mahasiswa_skill')
+        ->join('skills', 'mahasiswa_skill.skill_id', '=', 'skills.id')
+        ->where('mahasiswa_skill.mahasiswa_id', $mahasiswaId)
+        ->pluck('skills.nama');
+
+        // Ambil skill yang dibutuhkan lowongan
+        $skillLowongan = DB::table('lowongan_skill')
+        ->join('skills', 'lowongan_skill.skill_id', '=', 'skills.id')
+        ->where('lowongan_skill.lowongan_id', $lowongan->id)
+        ->pluck('skills.nama');
+
+        return view('dashboard.lowongan-details', compact('lowongan', 'skillMahasiswa', 'skillLowongan'));
     }
 
     public function profileMahasiswa(Request $request)
@@ -120,5 +139,32 @@ class MahasiswaController extends Controller
         );
 
         return response()->json(['success' => true, 'message' => 'CV berhasil diupload!']);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $mahasiswa = Auth::guard('mahasiswa')->user();
+
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:mahasiswas,email,' . $mahasiswa->id,
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        $mahasiswa->nama = $request->nama;
+        $mahasiswa->email = $request->email;
+
+        if ($request->hasFile('avatar')) {
+            // Hapus foto lama jika ada
+            if ($mahasiswa->foto && Storage::exists($mahasiswa->foto)) {
+                Storage::delete($mahasiswa->foto);
+            }
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $mahasiswa->foto = $path;
+        }
+
+        $mahasiswa->save();
+
+        return redirect()->back()->with('success', 'Profil berhasil diperbarui.');
     }
 }

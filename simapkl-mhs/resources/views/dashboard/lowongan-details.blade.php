@@ -179,7 +179,7 @@
 
                     <!-- Quick Actions -->
                     <div class="space-y-3">
-                        <button class="w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium py-2 px-4 rounded-lg text-sm transition-colors duration-200">
+                        <button onclick="showEditProfileModal()" class="w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium py-2 px-4 rounded-lg text-sm transition-colors duration-200">
                             Edit Profile
                         </button>
                         <button onclick="showUploadModal()" class="w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium py-2 px-4 rounded-lg text-sm transition-colors duration-200">
@@ -190,31 +190,19 @@
                         </button>
                     </div>
 
-                    <!-- Recent Activity -->
+                    <!-- User Skills -->
                     <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                        <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">Aktivitas Terbaru</h4>
+                        <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">Skill kamu:</h4>
                         <div class="space-y-3">
+                            @foreach ( $skillMahasiswa as $skill )
+                            
                             <div class="flex items-start space-x-3">
                                 <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                                 <div>
-                                    <p class="text-xs text-gray-600 dark:text-gray-400">Melamar posisi Web Developer</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-500">2 hari lalu</p>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400">{{ $skill }}</p> 
                                 </div>
                             </div>
-                            <div class="flex items-start space-x-3">
-                                <div class="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
-                                <div>
-                                    <p class="text-xs text-gray-600 dark:text-gray-400">Profile diperbarui</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-500">5 hari lalu</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start space-x-3">
-                             <div class="w-2 h-2 bg-yellow-500 rounded-full mt-2 flex-shrink-0"></div>
-                                <div>
-                                    <p class="text-xs text-gray-600 dark:text-gray-400">CV diunduh perusahaan</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-500">1 minggu lalu</p>
-                                </div>
-                            </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -293,6 +281,49 @@
     </div>
 
 
+    <!-- Modal Edit Profile -->
+    <div id="editProfileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md mx-4">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Edit Profile</h3>
+                <button onclick="closeEditProfileModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6">
+                <form id="editProfileForm" action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <div class="mb-4">
+                        <label for="nama" class="block text-gray-700 dark:text-gray-300 mb-2">Nama</label>
+                        <input type="text" name="nama" id="nama" value="{{ Auth::guard('mahasiswa')->user()->nama }}" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-400 dark:bg-gray-700 dark:text-white" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="email" class="block text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                        <input type="email" name="email" id="email" value="{{ Auth::guard('mahasiswa')->user()->email }}" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-400 dark:bg-gray-700 dark:text-white" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="avatar" class="block text-gray-700 dark:text-gray-300 mb-2">Foto Profil (opsional)</label>
+                        <input type="file" name="avatar" id="avatar" accept="image/*" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-400 dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div class="flex justify-end space-x-3 mt-6">
+                        <button type="button" onclick="closeEditProfileModal()" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200">
+                            Batal
+                        </button>
+                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                            Simpan Perubahan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Alert Modal untuk Lamar -->
     <div id="applicationAlert" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-sm mx-4">
@@ -360,6 +391,23 @@
             alert('Lamaran berhasil dikirim!');
             closeApplicationAlert();
         }
+
+        function showEditProfileModal() {
+            document.getElementById('editProfileModal').classList.remove('hidden');
+            document.getElementById('editProfileModal').classList.add('flex');
+        }
+
+        function closeEditProfileModal() {
+            document.getElementById('editProfileModal').classList.add('hidden');
+            document.getElementById('editProfileModal').classList.remove('flex');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('editProfileModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('editProfileModal')) {
+                closeEditProfileModal();
+            }
+        });
 
         // File Upload Logic
         const dropZone = document.getElementById('dropZone');

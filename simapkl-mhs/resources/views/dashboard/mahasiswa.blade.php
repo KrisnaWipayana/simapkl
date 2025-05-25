@@ -37,13 +37,34 @@
                                         <div>
                                             <h3 class="font-semibold text-base">{{ $lwg->judul }}</h3>
                                             <p class="text-sm text-gray-500 dark:text-gray-300 line-clamp-3 mb-1">{{ $lwg->nama_perusahaan }}</p>
-                                            <!-- <hr class="bg-gray-300 dark:bg-gray-600 h-px my-2"> -->
                                             <p class="text-sm text-gray-500 dark:text-gray-300 line-clamp-3 mt-1">{{ $lwg->alamat_perusahaan }}</p>
-                                            <!-- <p class="text-sm text-gray-500 dark:text-gray-300 line-clamp-3 mt-1">{{ $lwg->deskripsi }}</p> -->
+
+                                            {{-- Skills section --}}
+                                            @if (!empty($skillLowonganMap[$lwg->id]) && count($skillLowonganMap[$lwg->id]) > 0)
+                                                <div class="mt-2 flex flex-nowrap overflow-x-auto pb-2 scrollbar-hide">
+                                                    @foreach ($skillLowonganMap[$lwg->id] as $skill)
+                                                        <span class="flex-shrink-0 bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+                                                            {{ $skill }}
+                                                        </span>
+                                                    @endforeach
+                                                </div>
+                                            @endif
                                         </div>
                                     </button>
                                 @endforeach
                             </div>
+
+                            <style>
+                                /* For Webkit browsers (Chrome, Safari) */
+                                .scrollbar-hide::-webkit-scrollbar {
+                                    display: none;
+                                }
+
+                                /* For Firefox */
+                                .scrollbar-hide {
+                                    scrollbar-width: none;
+                                }
+                            </style>
 
                             <!-- Popup -->
                             <div

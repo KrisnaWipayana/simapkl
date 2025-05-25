@@ -40,26 +40,6 @@ Route::prefix('login')->group(function () {
     }
 );
 
-
-// // Mahasiswa only
-// Route::middleware(['auth:mahasiswa'])->group(function () {
-//     Route::get('/mahasiswa/dashboard', [MahasiswaController ::class, 'index'])
-//     ->name('dashboard.mahasiswa');
-// });
-
-// // Dosen only
-// Route::middleware(['auth:dospem'])->group(function () {
-//     Route::get('/dosen/dashboard', [DospemContoller::class, 'index'])
-//     ->name('dashboard.dospem');
-// });
-
-// // Perusahaan only
-// Route::middleware(['auth:perusahaan'])->group(function () {
-//     Route::get('/perusahaan/dashboard', [PerusahaanController::class, 'index'])
-//     ->name('dashboard.perusahaan');
-// });
-
-
 Route::post('/logout/mahasiswa', function () {
     Auth::guard('mahasiswa')->logout();
     return redirect()->route('login.mahasiswa')->with('success', 'Berhasil logout');
@@ -87,7 +67,8 @@ Route::prefix('dashboard')->group(function () {
             Route::get('/mahasiswa/profile', [MahasiswaController::class,'profileMahasiswa'])
             ->name('dashboard.profile.mhs');
 
-            //  Route::get('/upload-cv', [MahasiswaController::class, 'showUploadForm'])->name('cv.upload.form');
+            Route::put('/mahasiswa/profile', [MahasiswaController::class, 'updateProfile'])->name('profile.update');
+
             Route::post('/upload-cv', [MahasiswaController::class, 'uploadCV'])->name('cv.upload');
         });
 
