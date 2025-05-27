@@ -28,4 +28,9 @@ class Mahasiswa extends Authenticatable
 {
     return $this->hasOne(CV::class);
 }
+
+public function skills()
+{
+    return $this->belongsToMany(\App\Models\Skill::class, 'mahasiswa_skill', 'mahasiswa_id', 'skill_id');
+}
 }

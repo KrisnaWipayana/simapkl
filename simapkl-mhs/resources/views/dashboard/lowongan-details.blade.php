@@ -9,14 +9,14 @@
 
         <div id="alert" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 transition-all duration-500 ease-in-out transform translate-y-0 opacity-100">
             <div class="flex justify-between items-center">
-                <h2 class="text-sm lg:text-lg font-sans font-semibold">Persiapkan data kamu sebelum melamar magang ya.</h2>
+                <h2 class="text-sm lg:text-lg font-sans font-semibold">Persiapkan data kamu sebelum melamar magang ya!</h2>
                 <button id = "closeAlertBtn" class="text-gray-500 dark:text-gray-400">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                     </svg>
                 </button>
             </div>
-            <p class="text-sm font-sans">Persiapkan data kamu sebelum melamar magang ya.</p>
+            <!-- <p class="text-sm font-sans">Persiapkan data kamu sebelum melamar magang ya.</p> -->
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
@@ -79,6 +79,20 @@
                         </div>
                     </div>
 
+                    <!-- Skill yang Dibutuhkan Lowongan -->
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Skill yang Dibutuhkan</h2>
+                        <div class="flex flex-wrap gap-2">
+                            @forelse($skillLowongan as $skill)
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+                                    {{ $skill }}
+                                </span>
+                            @empty
+                                <span class="text-gray-500 dark:text-gray-400">Tidak ada skill khusus.</span>
+                            @endforelse
+                        </div>
+                    </div>
+
                     <!-- Informasi Perusahaan -->
                     <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                         <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Tentang Perusahaan</h2>
@@ -126,7 +140,6 @@
                             <button class="flex-1 sm:flex-none bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
                                 Simpan Lowongan
                             </button>
-
                         </div>
                     </div>
                 </div>
@@ -280,7 +293,6 @@
         </div>
     </div>
 
-
     <!-- Modal Edit Profile -->
     <div id="editProfileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md mx-4">
@@ -310,6 +322,22 @@
                     <div class="mb-4">
                         <label for="avatar" class="block text-gray-700 dark:text-gray-300 mb-2">Foto Profil (opsional)</label>
                         <input type="file" name="avatar" id="avatar" accept="image/*" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-400 dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 dark:text-gray-300 mb-2">Skill</label>
+                        <div id="selectedSkills" class="flex flex-wrap gap-2 mb-2">
+                            @foreach(Auth::guard('mahasiswa')->user()->skills as $skill)
+                                <span class="flex items-center bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+                                    {{ $skill->nama }}
+                                    <button type="button" class="ml-1 text-red-500 hover:text-red-700 focus:outline-none remove-skill-btn" data-id="{{ $skill->id }}">
+                                        &times;
+                                    </button>
+                                </span>
+                            @endforeach
+                        </div>
+                        <input type="text" id="skillSearch" placeholder="Cari skill..." class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-400 dark:bg-gray-700 dark:text-white">
+                        <div id="skillSuggestions" class="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded shadow-lg hidden"></div>
+                        <small class="text-gray-500 dark:text-gray-400">Cari dan tambahkan skill. Klik <span class="font-bold text-red-500">×</span> untuk menghapus.</small>
                     </div>
                     <div class="flex justify-end space-x-3 mt-6">
                         <button type="button" onclick="closeEditProfileModal()" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200">
@@ -550,6 +578,98 @@
             if (e.target === document.getElementById('applicationAlert')) {
                 closeApplicationAlert();
             }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Search skill
+            const skillSearch = document.getElementById('skillSearch');
+            const skillSuggestions = document.getElementById('skillSuggestions');
+            const selectedSkillsDiv = document.getElementById('selectedSkills');
+
+            let debounceTimeout = null;
+
+            skillSearch.addEventListener('input', function () {
+                clearTimeout(debounceTimeout);
+                const query = this.value.trim();
+                if (query.length < 2) {
+                    skillSuggestions.classList.add('hidden');
+                    return;
+                }
+                debounceTimeout = setTimeout(() => {
+                    fetch(`{{ route('skills.search') }}?q=${encodeURIComponent(query)}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            skillSuggestions.innerHTML = '';
+                            if (data.length === 0) {
+                                skillSuggestions.classList.add('hidden');
+                                return;
+                            }
+                            data.forEach(skill => {
+                                // Cek apakah sudah dipilih
+                                if (selectedSkillsDiv.querySelector(`[data-id="${skill.id}"]`)) return;
+                                const btn = document.createElement('button');
+                                btn.type = 'button';
+                                btn.className = 'block w-full text-left px-3 py-2 hover:bg-blue-100 dark:hover:bg-blue-900';
+                                btn.textContent = skill.nama;
+                                btn.onclick = function () {
+                                    addSkill(skill.id, skill.nama);
+                                    skillSuggestions.classList.add('hidden');
+                                    skillSearch.value = '';
+                                };
+                                skillSuggestions.appendChild(btn);
+                            });
+                            skillSuggestions.classList.remove('hidden');
+                        });
+                }, 300);
+            });
+
+            // Add skill via AJAX
+            function addSkill(skillId, skillNama) {
+                fetch('{{ route('profile.skill.add') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ skill_id: skillId })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const span = document.createElement('span');
+                        span.className = 'flex items-center bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300';
+                        span.innerHTML = `${skillNama}
+                            <button type="button" class="ml-1 text-red-500 hover:text-red-700 focus:outline-none remove-skill-btn" data-id="${skillId}">&times;</button>`;
+                        selectedSkillsDiv.appendChild(span);
+                    }
+                });
+            }
+
+            // Remove skill via AJAX
+            selectedSkillsDiv.addEventListener('click', function (e) {
+                if (e.target.classList.contains('remove-skill-btn')) {
+                    const skillId = e.target.getAttribute('data-id');
+                    fetch('{{ route('profile.skill.remove') }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ skill_id: skillId })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            e.target.parentElement.remove();
+                        }
+                    });
+                }
+            });
+
+            // Hide suggestions on blur
+            skillSearch.addEventListener('blur', function () {
+                setTimeout(() => skillSuggestions.classList.add('hidden'), 200);
+            });
         });
     </script>
 @endsection

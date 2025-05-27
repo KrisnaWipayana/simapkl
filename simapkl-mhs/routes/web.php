@@ -70,6 +70,12 @@ Route::prefix('dashboard')->group(function () {
             Route::put('/mahasiswa/profile', [MahasiswaController::class, 'updateProfile'])->name('profile.update');
 
             Route::post('/upload-cv', [MahasiswaController::class, 'uploadCV'])->name('cv.upload');
+
+            Route::get('/skills/search', [MahasiswaController::class, 'searchSkills'])->name('skills.search');
+
+            Route::post('/profile/skill/add', [MahasiswaController::class, 'addSkill'])->name('profile.skill.add');
+            
+            Route::post('/profile/skill/remove', [MahasiswaController::class, 'removeSkill'])->name('profile.skill.remove');
         });
 
         Route::middleware('auth:dospem')->group(function () {

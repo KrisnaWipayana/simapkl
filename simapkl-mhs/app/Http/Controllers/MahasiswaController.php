@@ -61,6 +61,7 @@ class MahasiswaController extends Controller
         ->first();
 
         $mahasiswaId = Auth::guard('mahasiswa')->user()->id;
+
         $skillMahasiswa = DB::table('mahasiswa_skill')
         ->join('skills', 'mahasiswa_skill.skill_id', '=', 'skills.id')
         ->where('mahasiswa_skill.mahasiswa_id', $mahasiswaId)
@@ -84,12 +85,19 @@ class MahasiswaController extends Controller
         ->where('id', $user->id)
         ->first();
 
+    $mahasiswaId = Auth::guard('mahasiswa')->user()->id;
+
     // Ambil skill mahasiswa (join ke tabel skills)
     $skills = DB::table('mahasiswa_skill')
         ->join('skills', 'mahasiswa_skill.skill_id', '=', 'skills.id')
         ->where('mahasiswa_skill.mahasiswa_id', $user->id)
         ->select('skills.nama')
         ->get();
+
+    $skillMahasiswa = DB::table('mahasiswa_skill')
+        ->join('skills', 'mahasiswa_skill.skill_id', '=', 'skills.id')
+        ->where('mahasiswa_skill.mahasiswa_id', $mahasiswaId)
+        ->pluck('skills.nama');
 
     $perusahaan = DB::table('perusahaans')
         ->where('id', $mahasiswa->perusahaan_id)
@@ -111,7 +119,7 @@ class MahasiswaController extends Controller
     ->select('nama as nama_jurusan')
     ->first();
 
-    return view('dashboard.profile-mhs', compact('mahasiswa', 'skills', 'prodi', 'jurusan', 'perusahaan', 'lowongan'));
+    return view('dashboard.profile-mhs', compact('mahasiswa', 'skills', 'prodi', 'jurusan', 'perusahaan', 'lowongan', 'skillMahasiswa'));
 }
 
     public function uploadCV(Request $request)
@@ -149,13 +157,14 @@ class MahasiswaController extends Controller
             'nama' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:mahasiswas,email,' . $mahasiswa->id,
             'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'skills' => 'nullable|array',
+            'skills.*' => 'exists:skills,id',
         ]);
 
         $mahasiswa->nama = $request->nama;
         $mahasiswa->email = $request->email;
 
         if ($request->hasFile('avatar')) {
-            // Hapus foto lama jika ada
             if ($mahasiswa->foto && Storage::exists($mahasiswa->foto)) {
                 Storage::delete($mahasiswa->foto);
             }
@@ -165,6 +174,33 @@ class MahasiswaController extends Controller
 
         $mahasiswa->save();
 
-        return redirect()->back()->with('success', 'Profil berhasil diperbarui.');
+        return redirect()->back()->with('success', 'Profil & skill berhasil diperbarui.');
+    }
+
+    public function addSkill(Request $request)
+    {
+        $request->validate([
+            'skill_id' => 'required|exists:skills,id',
+        ]);
+        $mahasiswa = Auth::guard('mahasiswa')->user();
+        $mahasiswa->skills()->syncWithoutDetaching([$request->skill_id]);
+        return response()->json(['success' => true]);
+    }
+
+    public function removeSkill(Request $request)
+    {
+        $request->validate([
+            'skill_id' => 'required|exists:skills,id',
+        ]);
+        $mahasiswa = Auth::guard('mahasiswa')->user();
+        $mahasiswa->skills()->detach($request->skill_id);
+        return response()->json(['success' => true]);
+    }
+
+    public function searchSkills(Request $request)
+    {
+        $query = $request->input('q');
+        $skills = \App\Models\Skill::where('nama', 'like', '%' . $query . '%')->limit(10)->get();
+        return response()->json($skills);
     }
 }

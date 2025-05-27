@@ -3,6 +3,66 @@
 
 @section('content')
 <div class="p-4 min-h-screen">
+
+    <!-- Modal Edit Profile -->
+    <div id="editProfileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md mx-4">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Edit Profile</h3>
+                <button onclick="closeEditProfileModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6">
+                <form id="editProfileForm" action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <div class="mb-4">
+                        <label for="nama" class="block text-gray-700 dark:text-gray-300 mb-2">Nama</label>
+                        <input type="text" name="nama" id="nama" value="{{ Auth::guard('mahasiswa')->user()->nama }}" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-400 dark:bg-gray-700 dark:text-white" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="email" class="block text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                        <input type="email" name="email" id="email" value="{{ Auth::guard('mahasiswa')->user()->email }}" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-400 dark:bg-gray-700 dark:text-white" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="avatar" class="block text-gray-700 dark:text-gray-300 mb-2">Foto Profil (opsional)</label>
+                        <input type="file" name="avatar" id="avatar" accept="image/*" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-400 dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 dark:text-gray-300 mb-2">Skill</label>
+                        <div id="selectedSkills" class="flex flex-wrap gap-2 mb-2">
+                            @foreach(Auth::guard('mahasiswa')->user()->skills as $skill)
+                                <span class="flex items-center bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+                                    {{ $skill->nama }}
+                                    <button type="button" class="ml-1 text-red-500 hover:text-red-700 focus:outline-none remove-skill-btn" data-id="{{ $skill->id }}">
+                                        &times;
+                                    </button>
+                                </span>
+                            @endforeach
+                        </div>
+                        <input type="text" id="skillSearch" placeholder="Cari skill..." class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-400 dark:bg-gray-700 dark:text-white">
+                        <div id="skillSuggestions" class="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded shadow-lg hidden"></div>
+                        <small class="text-gray-500 dark:text-gray-400">Cari dan tambahkan skill. Klik <span class="font-bold text-red-500">×</span> untuk menghapus.</small>
+                    </div>
+                    <div class="flex justify-end space-x-3 mt-6">
+                        <button type="button" onclick="closeEditProfileModal()" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200">
+                            Batal
+                        </button>
+                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                            Simpan Perubahan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Header Section -->
     <div class="mb-8">
         <div class="flex items-center space-x-3 mb-2">
@@ -25,13 +85,6 @@
                 <!-- Cover Background -->
                 <div class="h-32 bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 relative">
                     <div class="absolute inset-0 bg-black bg-opacity-20"></div>
-                    <div class="absolute top-4 right-4">
-                        <button class="bg-white bg-opacity-20 backdrop-blur-sm text-white p-2 rounded-lg hover:bg-opacity-30 transition-all duration-200">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-                            </svg>
-                        </button>
-                    </div>
                 </div>
 
                 <!-- Profile Content -->
@@ -123,7 +176,7 @@
 
                     <!-- Action Button -->
                     <div class="mt-8 flex flex-col sm:flex-row gap-4">
-                        <button class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3 px-6 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 flex items-center justify-center space-x-2">
+                        <button onclick="showEditProfileModal()" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3 px-6 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 flex items-center justify-center space-x-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                             </svg>
@@ -133,7 +186,7 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
-                            <span>Download CV</span>
+                            <span>Upload CV</span>
                         </button>
                     </div>
                 </div>
@@ -168,24 +221,18 @@
                     <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                     </svg>
-                    Statistik
+                    Skill
                 </h3>
                 
                 <div class="space-y-3">
-                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">Profil Lengkap</span>
-                        <div class="flex items-center space-x-2">
-                            <div class="w-20 h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
-                                <div class="w-4/5 h-full bg-gradient-to-r from-green-500 to-emerald-500"></div>
+                    @foreach ( $skillMahasiswa as $skill )   
+                            <div class="flex items-start space-x-3">
+                                <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                                <div>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400">{{ $skill }}</p> 
+                                </div>
                             </div>
-                            <span class="text-sm font-semibold text-green-600">80%</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">Terakhir Update</span>
-                        <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ Auth::guard('mahasiswa')->user()->updated_at->format('d M Y') }}</span>
-                    </div>
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -208,4 +255,116 @@
     animation: fadeInUp 0.6s ease-out;
 }
 </style>
+
+<script>
+
+    function showEditProfileModal() {
+            document.getElementById('editProfileModal').classList.remove('hidden');
+            document.getElementById('editProfileModal').classList.add('flex');
+        }
+
+    function closeEditProfileModal() {
+            document.getElementById('editProfileModal').classList.add('hidden');
+            document.getElementById('editProfileModal').classList.remove('flex');
+        }
+
+    // Close modal when clicking outside
+    document.getElementById('editProfileModal').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('editProfileModal')) {
+            closeEditProfileModal();
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+            // Search skill
+            const skillSearch = document.getElementById('skillSearch');
+            const skillSuggestions = document.getElementById('skillSuggestions');
+            const selectedSkillsDiv = document.getElementById('selectedSkills');
+
+            let debounceTimeout = null;
+
+            skillSearch.addEventListener('input', function () {
+                clearTimeout(debounceTimeout);
+                const query = this.value.trim();
+                if (query.length < 2) {
+                    skillSuggestions.classList.add('hidden');
+                    return;
+                }
+                debounceTimeout = setTimeout(() => {
+                    fetch(`{{ route('skills.search') }}?q=${encodeURIComponent(query)}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            skillSuggestions.innerHTML = '';
+                            if (data.length === 0) {
+                                skillSuggestions.classList.add('hidden');
+                                return;
+                            }
+                            data.forEach(skill => {
+                                // Cek apakah sudah dipilih
+                                if (selectedSkillsDiv.querySelector(`[data-id="${skill.id}"]`)) return;
+                                const btn = document.createElement('button');
+                                btn.type = 'button';
+                                btn.className = 'block w-full text-left px-3 py-2 hover:bg-blue-100 dark:hover:bg-blue-900';
+                                btn.textContent = skill.nama;
+                                btn.onclick = function () {
+                                    addSkill(skill.id, skill.nama);
+                                    skillSuggestions.classList.add('hidden');
+                                    skillSearch.value = '';
+                                };
+                                skillSuggestions.appendChild(btn);
+                            });
+                            skillSuggestions.classList.remove('hidden');
+                        });
+                }, 300);
+            });
+
+            // Add skill via AJAX
+            function addSkill(skillId, skillNama) {
+                fetch('{{ route('profile.skill.add') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ skill_id: skillId })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const span = document.createElement('span');
+                        span.className = 'flex items-center bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300';
+                        span.innerHTML = `${skillNama}
+                            <button type="button" class="ml-1 text-red-500 hover:text-red-700 focus:outline-none remove-skill-btn" data-id="${skillId}">&times;</button>`;
+                        selectedSkillsDiv.appendChild(span);
+                    }
+                });
+            }
+
+            // Remove skill via AJAX
+            selectedSkillsDiv.addEventListener('click', function (e) {
+                if (e.target.classList.contains('remove-skill-btn')) {
+                    const skillId = e.target.getAttribute('data-id');
+                    fetch('{{ route('profile.skill.remove') }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ skill_id: skillId })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            e.target.parentElement.remove();
+                        }
+                    });
+                }
+            });
+
+            // Hide suggestions on blur
+            skillSearch.addEventListener('blur', function () {
+                setTimeout(() => skillSuggestions.classList.add('hidden'), 200);
+            });
+        });
+</script>
 @endsection
