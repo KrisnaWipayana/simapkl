@@ -206,9 +206,8 @@
                     <!-- User Skills -->
                     <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                         <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">Skill kamu:</h4>
-                        <div class="space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
                             @foreach ( $skillMahasiswa as $skill )
-                            
                             <div class="flex items-start space-x-3">
                                 <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                                 <div>
@@ -326,10 +325,10 @@
                     <div class="mb-4">
                         <label class="block text-gray-700 dark:text-gray-300 mb-2">Skill</label>
                         <div id="selectedSkills" class="flex flex-wrap gap-2 mb-2">
-                            @foreach(Auth::guard('mahasiswa')->user()->skills as $skill)
-                                <span class="flex items-center bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
-                                    {{ $skill->nama }}
-                                    <button type="button" class="ml-1 text-red-500 hover:text-red-700 focus:outline-none remove-skill-btn" data-id="{{ $skill->id }}">
+                            @foreach($skillMahasiswa as $id => $skill)
+                                <span class="flex items-center bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300" data-id="{{ $id }}">
+                                    {{ $skill }}
+                                    <button type="button" class="ml-1 text-red-500 hover:text-red-700 focus:outline-none remove-skill-btn" data-id="{{ $id }}">
                                         &times;
                                     </button>
                                 </span>
@@ -580,96 +579,140 @@
             }
         });
 
+
+        //skill section
         document.addEventListener('DOMContentLoaded', function () {
-            // Search skill
-            const skillSearch = document.getElementById('skillSearch');
-            const skillSuggestions = document.getElementById('skillSuggestions');
-            const selectedSkillsDiv = document.getElementById('selectedSkills');
+        // Search skill
+        const skillSearch = document.getElementById('skillSearch');
+        const skillSuggestions = document.getElementById('skillSuggestions');
+        const selectedSkillsDiv = document.getElementById('selectedSkills');
 
-            let debounceTimeout = null;
+        let debounceTimeout = null;
 
-            skillSearch.addEventListener('input', function () {
-                clearTimeout(debounceTimeout);
-                const query = this.value.trim();
-                if (query.length < 2) {
-                    skillSuggestions.classList.add('hidden');
-                    return;
-                }
-                debounceTimeout = setTimeout(() => {
-                    fetch(`{{ route('skills.search') }}?q=${encodeURIComponent(query)}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            skillSuggestions.innerHTML = '';
-                            if (data.length === 0) {
+        skillSearch.addEventListener('input', function () {
+            clearTimeout(debounceTimeout);
+            const query = this.value.trim();
+            if (query.length < 2) {
+                skillSuggestions.classList.add('hidden');
+                return;
+            }
+            
+            debounceTimeout = setTimeout(() => {
+                fetch(`{{ route('skills.search') }}?q=${encodeURIComponent(query)}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        skillSuggestions.innerHTML = '';
+                        
+                        if (data.length === 0) {
+                            skillSuggestions.classList.add('hidden');
+                            return;
+                        }
+                        
+                        data.forEach(skill => {
+                            // Cek apakah sudah dipilih
+                            if (selectedSkillsDiv.querySelector(`[data-id="${skill.id}"]`)) return;
+                            
+                            const btn = document.createElement('button');
+                            btn.type = 'button';
+                            btn.className = 'block w-full text-left px-3 py-2 hover:bg-blue-100 dark:hover:bg-blue-900';
+                            btn.textContent = skill.text || skill.nama;
+                            btn.onclick = function () {
+                                addSkill(skill.id, skill.text || skill.nama);
                                 skillSuggestions.classList.add('hidden');
-                                return;
-                            }
-                            data.forEach(skill => {
-                                // Cek apakah sudah dipilih
-                                if (selectedSkillsDiv.querySelector(`[data-id="${skill.id}"]`)) return;
-                                const btn = document.createElement('button');
-                                btn.type = 'button';
-                                btn.className = 'block w-full text-left px-3 py-2 hover:bg-blue-100 dark:hover:bg-blue-900';
-                                btn.textContent = skill.nama;
-                                btn.onclick = function () {
-                                    addSkill(skill.id, skill.nama);
-                                    skillSuggestions.classList.add('hidden');
-                                    skillSearch.value = '';
-                                };
-                                skillSuggestions.appendChild(btn);
-                            });
-                            skillSuggestions.classList.remove('hidden');
+                                skillSearch.value = '';
+                            };
+                            skillSuggestions.appendChild(btn);
                         });
-                }, 300);
-            });
+                        skillSuggestions.classList.remove('hidden');
+                    })
+                    .catch(error => {
+                        console.error('Error searching skills:', error);
+                        skillSuggestions.classList.add('hidden');
+                    });
+            }, 300);
+        });
 
-            // Add skill via AJAX
-            function addSkill(skillId, skillNama) {
-                fetch('{{ route('profile.skill.add') }}', {
+        // Add skill via AJAX
+        function addSkill(skillId, skillNama) {
+            fetch('{{ route('profile.skill.add') }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ skill_id: skillId })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    const span = document.createElement('span');
+                    span.className = 'flex items-center bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300';
+                    span.setAttribute('data-id', skillId);
+                    span.innerHTML = `${skillNama}
+                        <button type="button" class="ml-1 text-red-500 hover:text-red-700 focus:outline-none remove-skill-btn" data-id="${skillId}">&times;</button>`;
+                    selectedSkillsDiv.appendChild(span);
+                    
+                    // Reset input
+                    skillSearch.value = '';
+                } else {
+                    alert(data.message || 'Gagal menambahkan skill');
+                }
+            })
+            .catch(error => {
+                console.error('Error adding skill:', error);
+                alert(error.message || 'Terjadi kesalahan saat menambahkan skill');
+            });
+        }
+
+        // Remove skill via AJAX
+        selectedSkillsDiv.addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-skill-btn')) {
+                const skillId = e.target.getAttribute('data-id');
+                
+                fetch('{{ route('profile.skill.remove') }}', {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     },
                     body: JSON.stringify({ skill_id: skillId })
                 })
-                .then(res => res.json())
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => { throw err; });
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
-                        const span = document.createElement('span');
-                        span.className = 'flex items-center bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300';
-                        span.innerHTML = `${skillNama}
-                            <button type="button" class="ml-1 text-red-500 hover:text-red-700 focus:outline-none remove-skill-btn" data-id="${skillId}">&times;</button>`;
-                        selectedSkillsDiv.appendChild(span);
+                        e.target.parentElement.remove();
+                    } else {
+                        alert(data.message || 'Gagal menghapus skill');
                     }
+                })
+                .catch(error => {
+                    console.error('Error removing skill:', error);
+                    alert(error.message || 'Terjadi kesalahan saat menghapus skill');
                 });
             }
-
-            // Remove skill via AJAX
-            selectedSkillsDiv.addEventListener('click', function (e) {
-                if (e.target.classList.contains('remove-skill-btn')) {
-                    const skillId = e.target.getAttribute('data-id');
-                    fetch('{{ route('profile.skill.remove') }}', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ skill_id: skillId })
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            e.target.parentElement.remove();
-                        }
-                    });
-                }
-            });
-
-            // Hide suggestions on blur
-            skillSearch.addEventListener('blur', function () {
-                setTimeout(() => skillSuggestions.classList.add('hidden'), 200);
-            });
         });
+
+        // Hide suggestions on blur
+        skillSearch.addEventListener('blur', function () {
+            setTimeout(() => skillSuggestions.classList.add('hidden'), 200);
+        });
+    });
     </script>
 @endsection

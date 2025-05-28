@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BerkasController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\DospemContoller;
 use App\Http\Controllers\MahasiswaController;
@@ -67,15 +68,23 @@ Route::prefix('dashboard')->group(function () {
             Route::get('/mahasiswa/profile', [MahasiswaController::class,'profileMahasiswa'])
             ->name('dashboard.profile.mhs');
 
-            Route::put('/mahasiswa/profile', [MahasiswaController::class, 'updateProfile'])->name('profile.update');
+            Route::put('/mahasiswa/profile', [MahasiswaController::class, 'updateProfile'])
+            ->name('profile.update');
 
-            Route::post('/upload-cv', [MahasiswaController::class, 'uploadCV'])->name('cv.upload');
+            Route::post('/upload-cv', [MahasiswaController::class, 'uploadCV'])
+            ->name('cv.upload');
 
-            Route::get('/skills/search', [MahasiswaController::class, 'searchSkills'])->name('skills.search');
+            Route::get('/skills/search', [MahasiswaController::class, 'searchSkills'])
+            ->name('skills.search');
 
-            Route::post('/profile/skill/add', [MahasiswaController::class, 'addSkill'])->name('profile.skill.add');
+            Route::post('/profile/skill/add', [MahasiswaController::class, 'addSkill'])
+            ->name('profile.skill.add');
             
-            Route::post('/profile/skill/remove', [MahasiswaController::class, 'removeSkill'])->name('profile.skill.remove');
+            Route::post('/profile/skill/remove', [MahasiswaController::class, 'removeSkill'])
+            ->name('profile.skill.remove');
+            
+            Route::get('/dashboard/berkas', [BerkasController::class, 'index'])
+            ->name('dashboard.berkas.mhs');
         });
 
         Route::middleware('auth:dospem')->group(function () {

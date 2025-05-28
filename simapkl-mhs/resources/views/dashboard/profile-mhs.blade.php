@@ -216,6 +216,7 @@
             </div>
 
             <!-- Quick Stats -->
+            {{-- Sidebar Skill --}}
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 transform hover:scale-105 transition-transform duration-300">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
                     <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -223,17 +224,26 @@
                     </svg>
                     Skill
                 </h3>
-                
-                <div class="space-y-3">
-                    @foreach ( $skillMahasiswa as $skill )   
-                            <div class="flex items-start space-x-3">
-                                <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                                <div>
-                                    <p class="text-xs text-gray-600 dark:text-gray-400">{{ $skill }}</p> 
-                                </div>
-                            </div>
-                    @endforeach
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
+                    @forelse($skillMahasiswa as $skill)
+                        <div class="flex items-center space-x-2">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
+                            <span class="text-xs text-gray-600 dark:text-gray-400">{{ $skill }}</span>
+                        </div>
+                    @empty
+                        <span class="text-xs text-gray-400">Belum ada skill</span>
+                    @endforelse
                 </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 transform hover:scale-105 transition-transform duration-300">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                    CV
+                </h3>
+                <!-- CV disini -->
             </div>
         </div>
     </div>
@@ -275,96 +285,139 @@
         }
     });
 
-    document.addEventListener('DOMContentLoaded', function () {
-            // Search skill
-            const skillSearch = document.getElementById('skillSearch');
-            const skillSuggestions = document.getElementById('skillSuggestions');
-            const selectedSkillsDiv = document.getElementById('selectedSkills');
+    //skill section
+        document.addEventListener('DOMContentLoaded', function () {
+        // Search skill
+        const skillSearch = document.getElementById('skillSearch');
+        const skillSuggestions = document.getElementById('skillSuggestions');
+        const selectedSkillsDiv = document.getElementById('selectedSkills');
 
-            let debounceTimeout = null;
+        let debounceTimeout = null;
 
-            skillSearch.addEventListener('input', function () {
-                clearTimeout(debounceTimeout);
-                const query = this.value.trim();
-                if (query.length < 2) {
-                    skillSuggestions.classList.add('hidden');
-                    return;
-                }
-                debounceTimeout = setTimeout(() => {
-                    fetch(`{{ route('skills.search') }}?q=${encodeURIComponent(query)}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            skillSuggestions.innerHTML = '';
-                            if (data.length === 0) {
+        skillSearch.addEventListener('input', function () {
+            clearTimeout(debounceTimeout);
+            const query = this.value.trim();
+            if (query.length < 2) {
+                skillSuggestions.classList.add('hidden');
+                return;
+            }
+            
+            debounceTimeout = setTimeout(() => {
+                fetch(`{{ route('skills.search') }}?q=${encodeURIComponent(query)}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        skillSuggestions.innerHTML = '';
+                        
+                        if (data.length === 0) {
+                            skillSuggestions.classList.add('hidden');
+                            return;
+                        }
+                        
+                        data.forEach(skill => {
+                            // Cek apakah sudah dipilih
+                            if (selectedSkillsDiv.querySelector(`[data-id="${skill.id}"]`)) return;
+                            
+                            const btn = document.createElement('button');
+                            btn.type = 'button';
+                            btn.className = 'block w-full text-left px-3 py-2 hover:bg-blue-100 dark:hover:bg-blue-900';
+                            btn.textContent = skill.text || skill.nama;
+                            btn.onclick = function () {
+                                addSkill(skill.id, skill.text || skill.nama);
                                 skillSuggestions.classList.add('hidden');
-                                return;
-                            }
-                            data.forEach(skill => {
-                                // Cek apakah sudah dipilih
-                                if (selectedSkillsDiv.querySelector(`[data-id="${skill.id}"]`)) return;
-                                const btn = document.createElement('button');
-                                btn.type = 'button';
-                                btn.className = 'block w-full text-left px-3 py-2 hover:bg-blue-100 dark:hover:bg-blue-900';
-                                btn.textContent = skill.nama;
-                                btn.onclick = function () {
-                                    addSkill(skill.id, skill.nama);
-                                    skillSuggestions.classList.add('hidden');
-                                    skillSearch.value = '';
-                                };
-                                skillSuggestions.appendChild(btn);
-                            });
-                            skillSuggestions.classList.remove('hidden');
+                                skillSearch.value = '';
+                            };
+                            skillSuggestions.appendChild(btn);
                         });
-                }, 300);
-            });
+                        skillSuggestions.classList.remove('hidden');
+                    })
+                    .catch(error => {
+                        console.error('Error searching skills:', error);
+                        skillSuggestions.classList.add('hidden');
+                    });
+            }, 300);
+        });
 
-            // Add skill via AJAX
-            function addSkill(skillId, skillNama) {
-                fetch('{{ route('profile.skill.add') }}', {
+        // Add skill via AJAX
+        function addSkill(skillId, skillNama) {
+            fetch('{{ route('profile.skill.add') }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ skill_id: skillId })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    const span = document.createElement('span');
+                    span.className = 'flex items-center bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300';
+                    span.setAttribute('data-id', skillId);
+                    span.innerHTML = `${skillNama}
+                        <button type="button" class="ml-1 text-red-500 hover:text-red-700 focus:outline-none remove-skill-btn" data-id="${skillId}">&times;</button>`;
+                    selectedSkillsDiv.appendChild(span);
+                    
+                    // Reset input
+                    skillSearch.value = '';
+                } else {
+                    alert(data.message || 'Gagal menambahkan skill');
+                }
+            })
+            .catch(error => {
+                console.error('Error adding skill:', error);
+                alert(error.message || 'Terjadi kesalahan saat menambahkan skill');
+            });
+        }
+
+        // Remove skill via AJAX
+        selectedSkillsDiv.addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-skill-btn')) {
+                const skillId = e.target.getAttribute('data-id');
+                
+                fetch('{{ route('profile.skill.remove') }}', {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     },
                     body: JSON.stringify({ skill_id: skillId })
                 })
-                .then(res => res.json())
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => { throw err; });
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
-                        const span = document.createElement('span');
-                        span.className = 'flex items-center bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300';
-                        span.innerHTML = `${skillNama}
-                            <button type="button" class="ml-1 text-red-500 hover:text-red-700 focus:outline-none remove-skill-btn" data-id="${skillId}">&times;</button>`;
-                        selectedSkillsDiv.appendChild(span);
+                        e.target.parentElement.remove();
+                    } else {
+                        alert(data.message || 'Gagal menghapus skill');
                     }
+                })
+                .catch(error => {
+                    console.error('Error removing skill:', error);
+                    alert(error.message || 'Terjadi kesalahan saat menghapus skill');
                 });
             }
-
-            // Remove skill via AJAX
-            selectedSkillsDiv.addEventListener('click', function (e) {
-                if (e.target.classList.contains('remove-skill-btn')) {
-                    const skillId = e.target.getAttribute('data-id');
-                    fetch('{{ route('profile.skill.remove') }}', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ skill_id: skillId })
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            e.target.parentElement.remove();
-                        }
-                    });
-                }
-            });
-
-            // Hide suggestions on blur
-            skillSearch.addEventListener('blur', function () {
-                setTimeout(() => skillSuggestions.classList.add('hidden'), 200);
-            });
         });
+
+        // Hide suggestions on blur
+        skillSearch.addEventListener('blur', function () {
+            setTimeout(() => skillSuggestions.classList.add('hidden'), 200);
+        });
+    });
 </script>
 @endsection

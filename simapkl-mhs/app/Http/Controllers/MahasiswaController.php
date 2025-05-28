@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use function Laravel\Prompts\select;
+use Illuminate\Http\JsonResponse;
 
 class MahasiswaController extends Controller
 {
@@ -65,7 +66,7 @@ class MahasiswaController extends Controller
         $skillMahasiswa = DB::table('mahasiswa_skill')
         ->join('skills', 'mahasiswa_skill.skill_id', '=', 'skills.id')
         ->where('mahasiswa_skill.mahasiswa_id', $mahasiswaId)
-        ->pluck('skills.nama');
+        ->pluck('skills.nama', 'skills.id');
 
         // Ambil skill yang dibutuhkan lowongan
         $skillLowongan = DB::table('lowongan_skill')
@@ -177,30 +178,93 @@ class MahasiswaController extends Controller
         return redirect()->back()->with('success', 'Profil & skill berhasil diperbarui.');
     }
 
-    public function addSkill(Request $request)
+    public function searchSkills(Request $request): JsonResponse
     {
-        $request->validate([
-            'skill_id' => 'required|exists:skills,id',
-        ]);
-        $mahasiswa = Auth::guard('mahasiswa')->user();
-        $mahasiswa->skills()->syncWithoutDetaching([$request->skill_id]);
-        return response()->json(['success' => true]);
+        try {
+            $query = $request->input('q');
+            $skills = \App\Models\Skill::where('nama', 'like', '%' . $query . '%')
+                        ->limit(10)
+                        ->get(['id', 'nama as text']); // Ubah 'nama' menjadi 'text' untuk kompatibilitas select2
+            
+            return response()->json($skills);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
-    public function removeSkill(Request $request)
+    // Perbaiki method addSkill
+    public function addSkill(Request $request): JsonResponse
     {
-        $request->validate([
-            'skill_id' => 'required|exists:skills,id',
-        ]);
-        $mahasiswa = Auth::guard('mahasiswa')->user();
-        $mahasiswa->skills()->detach($request->skill_id);
-        return response()->json(['success' => true]);
+        try {
+            $request->validate([
+                'skill_id' => 'required|exists:skills,id',
+            ]);
+            
+            $mahasiswa = Auth::guard('mahasiswa')->user();
+            
+            // Cek apakah skill sudah ada
+            if ($mahasiswa->skills()->where('skill_id', $request->skill_id)->exists()) {
+                return response()->json([
+                    'success' => false, 
+                    'message' => 'Skill sudah ditambahkan sebelumnya'
+                ], 400);
+            }
+            
+            $mahasiswa->skills()->attach($request->skill_id);
+            
+            $skill = \App\Models\Skill::find($request->skill_id);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Skill berhasil ditambahkan',
+                'skill' => [
+                    'id' => $skill->id,
+                    'nama' => $skill->nama
+                ]
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak valid',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
-    public function searchSkills(Request $request)
+    // Perbaiki method removeSkill
+    public function removeSkill(Request $request): JsonResponse
     {
-        $query = $request->input('q');
-        $skills = \App\Models\Skill::where('nama', 'like', '%' . $query . '%')->limit(10)->get();
-        return response()->json($skills);
+        try {
+            $request->validate([
+                'skill_id' => 'required|exists:skills,id',
+            ]);
+            
+            $mahasiswa = Auth::guard('mahasiswa')->user();
+            $mahasiswa->skills()->detach($request->skill_id);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Skill berhasil dihapus'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak valid',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
