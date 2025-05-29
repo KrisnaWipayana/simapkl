@@ -50,7 +50,7 @@ Pastikan beberapa tools berikut sudah terinstall agar sistem berjalan lancar:
 - [XAMPP](https://www.apachefriends.org/download.html) (atau server lokal lain)
 - [Composer](https://getcomposer.org/download/)
 - [Git](https://git-scm.com/downloads) (opsional, tapi direkomendasikan)
-- [VCRedist] (https://learn.microsoft.com/id-id/cpp/windows/latest-supported-vc-redist?view=msvc-170#latest-microsoft-visual-c-redistributable-version)
+- [VCRedist](https://learn.microsoft.com/id-id/cpp/windows/latest-supported-vc-redist?view=msvc-170#latest-microsoft-visual-c-redistributable-version)
 
 ---
 
