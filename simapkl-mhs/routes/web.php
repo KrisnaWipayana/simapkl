@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BerkasController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\DospemContoller;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\PerusahaanController;
 use Illuminate\Support\Facades\Route;
@@ -85,6 +86,20 @@ Route::prefix('dashboard')->group(function () {
             
             Route::get('/dashboard/berkas', [BerkasController::class, 'index'])
             ->name('dashboard.berkas.mhs');
+
+            // Laporan Mingguan
+            Route::post('/laporan/mingguan/upload', [LaporanController::class, 'uploadMingguan'])->name('laporan.mingguan.upload');
+            
+            // Laporan Akhir
+            Route::post('/laporan/akhir/upload', [LaporanController::class, 'uploadAkhir'])->name('laporan.akhir.upload');
+            
+            // CV
+            Route::post('/cv/upload', [BerkasController::class, 'uploadCV'])->name('cv.upload');
+            Route::delete('/cv/{id}', [BerkasController::class, 'deleteCV'])->name('cv.delete');
+            
+            // File downloads
+            Route::get('/download/laporan/{id}', [LaporanController::class, 'downloadLaporan'])->name('laporan.download');
+            Route::get('/download/cv/{id}', [BerkasController::class, 'downloadCV'])->name('cv.download');
         });
 
         Route::middleware('auth:dospem')->group(function () {
