@@ -88,17 +88,28 @@ Route::prefix('dashboard')->group(function () {
             ->name('dashboard.berkas.mhs');
 
             // Laporan Mingguan
-            Route::post('/laporan/mingguan/upload', [LaporanController::class, 'uploadMingguan'])->name('laporan.mingguan.upload');
+            Route::post('/laporan/mingguan/upload', [LaporanController::class, 'uploadMingguan'])
+            ->name('laporan.mingguan.upload');
+            Route::delete('/laporan/mingguan/{id}', [LaporanController::class, 'deleteLaporanMingguan'])
+            ->name('laporan.mingguan.delete');
             
             // Laporan Akhir
-            Route::post('/laporan/akhir/upload', [LaporanController::class, 'uploadAkhir'])->name('laporan.akhir.upload');
+            Route::post('/laporan/akhir/upload', [LaporanController::class, 'uploadAkhir'])
+            ->name('laporan.akhir.upload');
+            Route::get('/download/laporan/{id}', [LaporanController::class, 'downloadLaporanAkhir'])
+            ->name('laporan.akhir.download');
+            Route::delete('/laporan/akhir/{id}', [LaporanController::class, 'deleteLaporanAkhir'])
+            ->name('laporan.akhir.delete');
+            // Route::get('/laporan/akhir/download/{id}', [LaporanController::class, 'downloadLaporanAkhir'])
+            // ->name('laporan.akhir.download');
             
             // CV
-            Route::post('/cv/upload', [BerkasController::class, 'uploadCV'])->name('cv.upload');
-            Route::delete('/cv/{id}', [BerkasController::class, 'deleteCV'])->name('cv.delete');
+            Route::delete('/cv/{id}', [BerkasController::class, 'deleteCV'])
+            ->name('cv.delete');
+            Route::get('/cv/download/{id}', [BerkasController::class, 'downloadCV'])
+            ->name('cv.download');
             
             // File downloads
-            Route::get('/download/laporan/{id}', [LaporanController::class, 'downloadLaporan'])->name('laporan.download');
             Route::get('/download/cv/{id}', [BerkasController::class, 'downloadCV'])->name('cv.download');
         });
 

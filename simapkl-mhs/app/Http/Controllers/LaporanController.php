@@ -16,21 +16,34 @@ class LaporanController extends Controller
         $request->validate([
             'judul_laporan' => 'required|string|max:255',
             'deskripsi_laporan' => 'required|string',
-            'file_laporan' => 'required|file|mimes:pdf,doc,docx|max:2048'
         ]);
 
-        $file = $request->file('file_laporan');
-        $path = $file->store('laporan_mingguan');
+        // $path = $file->store('laporan_mingguan');
 
         LaporanMingguan::create([
             'mahasiswa_id' => Auth::id(),
             'judul_laporan' => $request->judul_laporan,
             'deskripsi_laporan' => $request->deskripsi_laporan,
-            'file_laporan' => $path,
             'status_laporan' => 'Menunggu'
         ]);
 
         return redirect()->back()->with('success', 'Laporan mingguan berhasil diupload!');
+    }
+
+    // Delete Laporan Mingguan
+    public function deleteLaporanMingguan($id)
+    {
+        $LaporanMingguan = LaporanMingguan::findOrFail($id);
+        
+        // Pastikan hanya pemilik file yang dapat menghapus
+        if ($LaporanMingguan->mahasiswa_id != Auth::id()) {
+            abort(403, 'Anda tidak memiliki izin untuk menghapus laporan ini.');
+        }
+
+        // Hapus data dari database
+        $LaporanMingguan->delete();
+
+        return redirect()->back()->with('success', 'Laporan mingguan berhasil dihapus!');
     }
 
     // Upload Laporan Akhir
@@ -43,13 +56,15 @@ class LaporanController extends Controller
         ]);
 
         $file = $request->file('file_laporan');
-        $path = $file->store('laporan_akhir');
+        $fileName = 'Laporan _ ' . time() . '.' . $file->getClientOriginalExtension();
+        $path = $file->storeAs('laporanAkhir', $fileName, 'public');
+            \Log::info('File disimpan di: ' . $path);
 
         LaporanAkhir::create([
             'mahasiswa_id' => Auth::id(),
             'judul_laporan' => $request->judul_laporan,
             'deskripsi_laporan' => $request->deskripsi_laporan,
-            'file_laporan' => $path,
+            'file_laporan' => $fileName,
             'status_laporan' => 'Menunggu'
         ]);
 
@@ -57,15 +72,42 @@ class LaporanController extends Controller
     }
 
     // Download Laporan
-    public function downloadLaporan($id)
+    public function downloadLaporanAkhir($id)
     {
-        $laporan = LaporanMingguan::findOrFail($id);
+        $laporanAkhir = LaporanAkhir::findOrFail($id);
         
         // Check if user owns the file
-        if ($laporan->mahasiswa_id != Auth::id()) {
+        if ($laporanAkhir->mahasiswa_id != Auth::id()) {
             abort(403);
         }
 
-        return Storage::download($laporan->file_laporan);
+        $filePath = 'laporanAkhir/' . $laporanAkhir->file_laporan;
+
+        if (!Storage::disk('public')->exists($filePath)) {
+            abort(404, 'File tidak ditemukan.');
+        }
+
+        return Storage::disk('public')->download($filePath);
+    }
+
+    // Delete Laporan Akhir
+    public function deleteLaporanAkhir($id)
+    {
+        $laporanAkhir = LaporanAkhir::findOrFail($id);
+        
+        // Pastikan hanya pemilik file yang dapat menghapus
+        if ($laporanAkhir->mahasiswa_id != Auth::id()) {
+            abort(403, 'Anda tidak memiliki izin untuk menghapus laporan ini.');
+        }
+
+        // Hapus file dari storage
+        if ($laporanAkhir->file_laporan && Storage::exists('public/laporanAkhir/' . $laporanAkhir->file_laporan)) {
+            Storage::delete('public/laporanAkhir/' . $laporanAkhir->file_laporan);
+        }
+
+        // Hapus data dari database
+        $laporanAkhir->delete();
+
+        return redirect()->back()->with('success', 'Laporan mingguan berhasil dihapus!');
     }
 }

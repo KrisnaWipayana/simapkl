@@ -113,55 +113,63 @@
     </div>
 </div>
 
-<!-- Upload CV Modal -->
-<div id="uploadCVModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <!-- Modal Upload CV -->
+    <div id="uploadModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md mx-4">
+        <!-- Modal Header -->
         <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Upload CV</h3>
-            <button onclick="closeUploadCVModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+            <button onclick="closeUploadModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
         </div>
+
+        <!-- Modal Body -->
         <div class="p-6">
-            <form id="uploadCVForm" action="{{ route('cv.upload') }}" method="POST" enctype="multipart/form-data">
+            <form id="uploadForm" action="{{ route('cv.upload') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <div class="mb-4">
-                    <div id="cvDropzone" class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 transition-colors duration-200">
-                        <div id="cvDropzoneContent">
-                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                <!-- Drag and Drop Area -->
+                <div id="dropZone" class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center hover:border-blue-500 dark:hover:border-blue-400 transition-colors duration-200 cursor-pointer">
+                    <div id="dropContent">
+                        <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500 mb-4" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <p class="text-gray-600 dark:text-gray-400 mb-2">
+                            <span class="font-semibold text-blue-600 dark:text-blue-400">Klik untuk upload</span> atau drag and drop
+                        </p>
+                        <p class="text-sm text-gray-500 dark:text-gray-500">PDF, DOC, DOCX (Maksimal 10MB)</p>
+                    </div>
+                    <div id="filePreview" class="hidden">
+                        <div class="flex items-center justify-center space-x-3">
+                            <svg class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
                             </svg>
-                            <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Drag and drop your CV file here</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">or click to select file</p>
-                            <input type="file" name="cv" id="cvInput" class="hidden" accept=".pdf,.doc,.docx">
-                        </div>
-                        <div id="cvPreview" class="hidden">
-                            <div class="flex items-center justify-between bg-gray-100 dark:bg-gray-700 rounded-lg p-3">
-                                <div class="flex items-center">
-                                    <svg class="h-8 w-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                                    </svg>
-                                    <div class="ml-3">
-                                        <p id="cvFileName" class="text-sm font-medium text-gray-900 dark:text-white"></p>
-                                        <p id="cvFileSize" class="text-xs text-gray-500 dark:text-gray-400"></p>
-                                    </div>
-                                </div>
-                                <button type="button" onclick="removeCVFile()" class="text-red-500 hover:text-red-700">
-                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                    </svg>
-                                </button>
+                            <div>
+                                <p id="fileName" class="text-sm font-medium text-gray-900 dark:text-white"></p>
+                                <p id="fileSize" class="text-xs text-gray-500 dark:text-gray-400"></p>
                             </div>
                         </div>
+                        <button type="button" onclick="removeFile()" class="mt-2 text-sm text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">
+                            Hapus file
+                        </button>
                     </div>
                 </div>
+                
+                <input type="file" id="fileInput" name="cv" accept=".pdf,.doc,.docx" class="hidden">
+                
+                <!-- Error Message -->
+                <div id="errorMessage" class="hidden mt-3 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                    <p class="text-sm"></p>
+                </div>
+
+                <!-- Submit Button -->
                 <div class="flex justify-end space-x-3 mt-6">
-                    <button type="button" onclick="closeUploadCVModal()" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200">
+                    <button type="button" onclick="closeUploadModal()" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200">
                         Batal
                     </button>
-                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                    <button type="submit" id="submitBtn" disabled class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200">
                         Upload CV
                     </button>
                 </div>
@@ -169,8 +177,6 @@
         </div>
     </div>
 </div>
-
-
 
         <!-- Success Message -->
         @if (session('success'))
@@ -228,9 +234,11 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <!-- <a href="#" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-200 mr-3">Lihat</a>
-                                        <a href="#" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-200 mr-3">Unduh</a> -->
-                                        <a href="#" class="text-red-600 dark:text-red-400 hover:text-indigo-900 dark:hover:text-indigo-200">Hapus</a>
+                                        <form action="{{route('laporan.mingguan.delete', ['id' => $laporan->id]) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus laporan ini?');" style="display: inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 dark:text-red-400 hover:text-indigo-900 dark:hover:text-indigo-200">Hapus</button>
+                                        </form>  
                                     </td>
                                 </tr>
                                 @endforeach
@@ -288,8 +296,12 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <a href="#" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-200 mr-3">Lihat</a>
-                                        <a href="#" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-200 mr-3">Unduh</a>
-                                        <a href="#" class="text-red-600 dark:text-red-400 hover:text-indigo-900 dark:hover:text-indigo-200">Hapus</a>
+                                        <a href="{{route('laporan.akhir.download', ['id' => $laporan->id]) }}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-200 mr-3">Unduh</a>
+                                        <form action="{{route('laporan.akhir.delete', ['id' => $laporan->id]) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus Laporan ini?');" style="display: inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 dark:text-red-400 hover:text-indigo-900 dark:hover:text-indigo-200">Hapus</button>
+                                        </form>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -303,7 +315,7 @@
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
                 <div class="bg-blue-600 px-6 py-4 flex items-center justify-between">
                     <h2 class="text-xl font-semibold text-white">Upload CV</h2>
-                    <button onclick="showUploadCVModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center">
+                    <button onclick="showUploadModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
@@ -329,8 +341,12 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <a href="#" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-200 mr-3">Lihat</a>
-                                        <a href="#" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-200 mr-3">Unduh</a>
-                                        <a href="#" class="text-red-600 dark:text-red-400 hover:text-indigo-900 dark:hover:text-indigo-200">Hapus</a>
+                                        <a href="{{route('cv.download', ['id' => $file->id]) }}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-200 mr-3">Unduh</a>
+                                        <form action="{{route('cv.delete', ['id' => $file->id]) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus CV ini?');" style="display: inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 dark:text-red-400 hover:text-indigo-900 dark:hover:text-indigo-200">Hapus</button>
+                                        </form>                                            
                                     </td>
                                 </tr>
                                 @endforeach
@@ -344,165 +360,336 @@
 </div>
 
 <script>
-    // Modal functions
-    function showUploadLaporanModal() {
-        document.getElementById('uploadLaporanModal').classList.remove('hidden');
-        document.getElementById('uploadLaporanModal').classList.add('flex');
-    }
+// Global variables
+let selectedFile = null;
 
-    function closeUploadLaporanModal() {
-        document.getElementById('uploadLaporanModal').classList.add('hidden');
-        document.getElementById('uploadLaporanModal').classList.remove('flex');
+// Modal functions
+function showUploadLaporanModal() {
+    const modal = document.getElementById('uploadLaporanModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+}
+
+function closeUploadLaporanModal() {
+    const modal = document.getElementById('uploadLaporanModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
         resetLaporanForm();
     }
+}
 
-    function showUploadLaporanAkhirModal() {
-        document.getElementById('uploadLaporanAkhirModal').classList.remove('hidden');
-        document.getElementById('uploadLaporanAkhirModal').classList.add('flex');
+function showUploadLaporanAkhirModal() {
+    const modal = document.getElementById('uploadLaporanAkhirModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
     }
+}
 
-    function closeUploadLaporanAkhirModal() {
-        document.getElementById('uploadLaporanAkhirModal').classList.add('hidden');
-        document.getElementById('uploadLaporanAkhirModal').classList.remove('flex');
+function closeUploadLaporanAkhirModal() {
+    const modal = document.getElementById('uploadLaporanAkhirModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
         resetLaporanAkhirForm();
     }
+}
 
-    function showUploadCVModal() {
-        document.getElementById('uploadCVModal').classList.remove('hidden');
-        document.getElementById('uploadCVModal').classList.add('flex');
+function showUploadModal() {
+    const modal = document.getElementById('uploadModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+}
+
+function closeUploadModal() {
+    const modal = document.getElementById('uploadModal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        resetUploadForm();
+    }
+}
+
+// Form reset functions
+function resetLaporanForm() {
+    const judulInput = document.getElementById('judul_laporan');
+    const deskripsiInput = document.getElementById('deskripsi_laporan');
+    
+    if (judulInput) judulInput.value = '';
+    if (deskripsiInput) deskripsiInput.value = '';
+}
+
+function resetLaporanAkhirForm() {
+    const judulInput = document.getElementById('judul_laporan_akhir');
+    const deskripsiInput = document.getElementById('deskripsi_laporan_akhir');
+    
+    if (judulInput) judulInput.value = '';
+    if (deskripsiInput) deskripsiInput.value = '';
+    removeLaporanAkhirFile();
+}
+
+function resetUploadForm() {
+    selectedFile = null;
+    const dropContent = document.getElementById('dropContent');
+    const filePreview = document.getElementById('filePreview');
+    const errorMessage = document.getElementById('errorMessage');
+    const submitBtn = document.getElementById('submitBtn');
+    const fileInput = document.getElementById('fileInput');
+    
+    if (dropContent) dropContent.classList.remove('hidden');
+    if (filePreview) filePreview.classList.add('hidden');
+    if (errorMessage) errorMessage.classList.add('hidden');
+    if (submitBtn) submitBtn.disabled = true;
+    if (fileInput) fileInput.value = '';
+}
+
+// File handling functions
+function handleLaporanAkhirFileSelect(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const dropzoneContent = document.getElementById('laporanAkhirDropzoneContent');
+        const preview = document.getElementById('laporanAkhirPreview');
+        const fileName = document.getElementById('laporanAkhirFileName');
+        const fileSize = document.getElementById('laporanAkhirFileSize');
+        
+        if (dropzoneContent) dropzoneContent.classList.add('hidden');
+        if (preview) preview.classList.remove('hidden');
+        if (fileName) fileName.textContent = file.name;
+        if (fileSize) fileSize.textContent = formatFileSize(file.size);
+    }
+}
+
+function removeLaporanAkhirFile() {
+    const fileInput = document.getElementById('fileLaporanAkhirInput');
+    const dropzoneContent = document.getElementById('laporanAkhirDropzoneContent');
+    const preview = document.getElementById('laporanAkhirPreview');
+    
+    if (fileInput) fileInput.value = '';
+    if (dropzoneContent) dropzoneContent.classList.remove('hidden');
+    if (preview) preview.classList.add('hidden');
+}
+
+function handleFileSelect(file) {
+    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    const allowedExtensions = ['.pdf', '.doc', '.docx'];
+    
+    // Check file type by both MIME type and extension
+    const fileName = file.name.toLowerCase();
+    const fileExtension = fileName.substring(fileName.lastIndexOf('.'));
+    
+    if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) {
+        showError('Tipe file tidak didukung. Silakan upload file PDF, DOC, atau DOCX.');
+        return;
     }
 
-    function closeUploadCVModal() {
-        document.getElementById('uploadCVModal').classList.add('hidden');
-        document.getElementById('uploadCVModal').classList.remove('flex');
-        resetCVForm();
+    if (file.size > 10 * 1024 * 1024) {
+        showError('Ukuran file terlalu besar. Maksimal 10MB.');
+        return;
     }
 
+    selectedFile = file;
+    const fileNameEl = document.getElementById('fileName');
+    const fileSizeEl = document.getElementById('fileSize');
+    const dropContent = document.getElementById('dropContent');
+    const filePreview = document.getElementById('filePreview');
+    const errorMessage = document.getElementById('errorMessage');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    if (fileNameEl) fileNameEl.textContent = file.name;
+    if (fileSizeEl) fileSizeEl.textContent = formatFileSize(file.size);
+    if (dropContent) dropContent.classList.add('hidden');
+    if (filePreview) filePreview.classList.remove('hidden');
+    if (errorMessage) errorMessage.classList.add('hidden');
+    if (submitBtn) submitBtn.disabled = false;
+}
+
+function removeFile() {
+    resetUploadForm();
+}
+
+function showError(message) {
+    const errorDiv = document.getElementById('errorMessage');
+    if (errorDiv) {
+        const errorP = errorDiv.querySelector('p');
+        if (errorP) errorP.textContent = message;
+        errorDiv.classList.remove('hidden');
+    }
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
     // Close modals when clicking outside
-    document.querySelectorAll('[id$="Modal"]').forEach(modal => {
+    const modals = document.querySelectorAll('[id$="Modal"]');
+    modals.forEach(modal => {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 if (modal.id === 'uploadLaporanModal') closeUploadLaporanModal();
-                if (modal.id === 'uploadLaporanAkhirModal') closeUploadLaporanAkhirModal();
-                if (modal.id === 'uploadCVModal') closeUploadCVModal();
+                else if (modal.id === 'uploadLaporanAkhirModal') closeUploadLaporanAkhirModal();
+                else if (modal.id === 'uploadModal') closeUploadModal();
             }
         });
     });
 
-    // File handling for Laporan Mingguan
-    // const laporanDropzone = document.getElementById('laporanDropzone');
-    const fileLaporanInput = document.getElementById('fileLaporanInput');
-
-    // laporanDropzone.addEventListener('click', () => fileLaporanInput.click());
-    fileLaporanInput.addEventListener('change', handleLaporanFileSelect);
-
-    // laporanDropzone.addEventListener('dragover', (e) => {
-    //     e.preventDefault();
-    //     laporanDropzone.classList.add('border-blue-500');
-    //     laporanDropzone.classList.remove('border-gray-300', 'dark:border-gray-600');
-    // });
-
-    // laporanDropzone.addEventListener('dragleave', () => {
-    //     laporanDropzone.classList.remove('border-blue-500');
-    //     laporanDropzone.classList.add('border-gray-300', 'dark:border-gray-600');
-    // });
-
-    // laporanDropzone.addEventListener('drop', (e) => {
-    //     e.preventDefault();
-    //     laporanDropzone.classList.remove('border-blue-500');
-    //     laporanDropzone.classList.add('border-gray-300', 'dark:border-gray-600');
-        
-    //     if (e.dataTransfer.files.length) {
-    //         fileLaporanInput.files = e.dataTransfer.files;
-    //         handleLaporanFileSelect({ target: fileLaporanInput });
-    //     }
-    // });
-
-    // function handleLaporanFileSelect(e) {
-    //     const file = e.target.files[0];
-    //     if (file) {
-    //         document.getElementById('laporanDropzoneContent').classList.add('hidden');
-    //         document.getElementById('laporanPreview').classList.remove('hidden');
-            
-    //         document.getElementById('laporanFileName').textContent = file.name;
-    //         document.getElementById('laporanFileSize').textContent = formatFileSize(file.size);
-    //     }
-    // }
-
-    function removeLaporanFile() {
-        fileLaporanInput.value = '';
-        document.getElementById('laporanDropzoneContent').classList.remove('hidden');
-        document.getElementById('laporanPreview').classList.add('hidden');
-    }
-
-    function resetLaporanForm() {
-        document.getElementById('judul_laporan').value = '';
-        document.getElementById('deskripsi_laporan').value = '';
-        removeLaporanFile();
-    }
-
-    // File handling for Laporan Akhir
+    // Laporan Akhir file handling
     const laporanAkhirDropzone = document.getElementById('laporanAkhirDropzone');
     const fileLaporanAkhirInput = document.getElementById('fileLaporanAkhirInput');
 
-    laporanAkhirDropzone.addEventListener('click', () => fileLaporanAkhirInput.click());
-    fileLaporanAkhirInput.addEventListener('change', handleLaporanFileSelect);
+    if (laporanAkhirDropzone && fileLaporanAkhirInput) {
+        laporanAkhirDropzone.addEventListener('click', () => fileLaporanAkhirInput.click());
+        fileLaporanAkhirInput.addEventListener('change', handleLaporanAkhirFileSelect);
 
-    laporanAkhirDropzone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        laporanAkhirDropzone.classList.add('border-blue-500');
-        laporanAkhirDropzone.classList.remove('border-gray-300', 'dark:border-gray-600');
-    });
+        laporanAkhirDropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            laporanAkhirDropzone.classList.add('border-blue-500');
+            laporanAkhirDropzone.classList.remove('border-gray-300', 'dark:border-gray-600');
+        });
 
-    laporanAkhirDropzone.addEventListener('dragleave', () => {
-        laporanAkhirDropzone.classList.remove('border-blue-500');
-        laporanAkhirDropzone.classList.add('border-gray-300', 'dark:border-gray-600');
-    });
+        laporanAkhirDropzone.addEventListener('dragleave', () => {
+            laporanAkhirDropzone.classList.remove('border-blue-500');
+            laporanAkhirDropzone.classList.add('border-gray-300', 'dark:border-gray-600');
+        });
 
-    laporanAkhirDropzone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        laporanAkhirDropzone.classList.remove('border-blue-500');
-        laporanAkhirDropzone.classList.add('border-gray-300', 'dark:border-gray-600');
-        
-        if (e.dataTransfer.files.length) {
-            fileLaporanAkhirInput.files = e.dataTransfer.files;
-            handleLaporanFileSelect({ target: fileLaporanAkhirInput });
-        }
-    });
-
-    function handleLaporanAkhirFileSelect(e) {
-        const file = e.target.files[0];
-        if (file) {
-            document.getElementById('laporanAkhirDropzoneContent').classList.add('hidden');
-            document.getElementById('laporanAkhirPreview').classList.remove('hidden');
+        laporanAkhirDropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            laporanAkhirDropzone.classList.remove('border-blue-500');
+            laporanAkhirDropzone.classList.add('border-gray-300', 'dark:border-gray-600');
             
-            document.getElementById('laporanAkhirFileName').textContent = file.name;
-            document.getElementById('laporanAkhirFileSize').textContent = formatFileSize(file.size);
-        }
+            if (e.dataTransfer.files.length) {
+                // Create a new file input to simulate the change event
+                const dt = new DataTransfer();
+                dt.items.add(e.dataTransfer.files[0]);
+                fileLaporanAkhirInput.files = dt.files;
+                
+                handleLaporanAkhirFileSelect({ target: fileLaporanAkhirInput });
+            }
+        });
     }
 
-    function removeLaporanAkhirFile() {
-        fileLaporanAkhirInput.value = '';
-        document.getElementById('laporanAkhirDropzoneContent').classList.remove('hidden');
-        document.getElementById('laporanAkhirPreview').classList.add('hidden');
+    // CV Upload handling
+    const fileInput = document.getElementById('fileInput');
+    const dropZone = document.getElementById('dropZone');
+    const uploadForm = document.getElementById('uploadForm');
+
+    if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
     }
 
-    function resetLaporanAkhirForm() {
-        document.getElementById('judul_laporan').value = '';
-        document.getElementById('deskripsi_laporan').value = '';
-        removeLaporanAkhirFile();
+    if (dropZone) {
+        dropZone.addEventListener('click', (e) => {
+            if (e.target === dropZone || e.target.closest('#dropContent')) {
+                if (fileInput) fileInput.click();
+            }
+        });
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900');
+            dropZone.classList.remove('border-gray-300', 'dark:border-gray-600');
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900');
+            dropZone.classList.add('border-gray-300', 'dark:border-gray-600');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900');
+            dropZone.classList.add('border-gray-300', 'dark:border-gray-600');
+            
+            if (e.dataTransfer.files.length > 0) {
+                handleFileSelect(e.dataTransfer.files[0]);
+            }
+        });
     }
 
-    // File handling for CV (similar to above)
-    // ... similar implementation for CV ...
+    if (uploadForm) {
+        uploadForm.addEventListener('submit', function(e) {
+            e.preventDefault();
 
-    // Helper function
-    function formatFileSize(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            if (!selectedFile) {
+                showError('Silakan pilih file terlebih dahulu.');
+                return;
+            }
+
+            const formData = new FormData(this);
+
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('CV berhasil diupload!');
+                    closeUploadModal();
+                    window.location.reload();
+                } else {
+                    showError(data.message || 'Terjadi kesalahan saat mengupload CV.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('Terjadi kesalahan. Silakan coba lagi.');
+            });
+        });
     }
+
+    // Handle form submissions for laporan
+    const laporanForm = document.getElementById('uploadLaporanForm');
+    const laporanAkhirForm = document.getElementById('uploadLaporanAkhirForm');
+
+    if (laporanForm) {
+        laporanForm.addEventListener('submit', function(e) {
+            const judul = document.getElementById('judul_laporan').value.trim();
+            const deskripsi = document.getElementById('deskripsi_laporan').value.trim();
+            
+            if (!judul || !deskripsi) {
+                e.preventDefault();
+                alert('Silakan lengkapi semua field yang diperlukan.');
+                return;
+            }
+        });
+    }
+
+    if (laporanAkhirForm) {
+        laporanAkhirForm.addEventListener('submit', function(e) {
+            const judul = document.getElementById('judul_laporan_akhir').value.trim();
+            const deskripsi = document.getElementById('deskripsi_laporan_akhir').value.trim();
+            const fileInput = document.getElementById('fileLaporanAkhirInput');
+            
+            if (!judul || !deskripsi || !fileInput.files.length) {
+                e.preventDefault();
+                alert('Silakan lengkapi semua field dan pilih file yang akan diupload.');
+                return;
+            }
+        });
+    }
+});
 </script>
 @endsection

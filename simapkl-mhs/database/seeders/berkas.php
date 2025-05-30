@@ -10,7 +10,7 @@ class Berkas extends Seeder
     public function run(): void
     {
         // Laporan Mingguan
-        DB::table('laporan_mingguan')->insert([
+        DB::table('laporan_mingguans')->insert([
             [
             'mahasiswa_id' => 1,
             'judul_laporan' => 'Laporan Mingguan 1',
@@ -46,7 +46,7 @@ class Berkas extends Seeder
         ]);
 
         // Laporan Akhir
-        DB::table('laporan_akhir')->insert([
+        DB::table('laporan_akhirs')->insert([
             [
             'mahasiswa_id' => 1,
             'judul_laporan' => 'Laporan Akhir PKL',
@@ -77,7 +77,7 @@ class Berkas extends Seeder
         ]);
 
         // CV
-        DB::table('cv')->insert([
+        DB::table('cvs')->insert([
             [
             'mahasiswa_id' => 1,
             'file_cv' => 'cv_andi.pdf',

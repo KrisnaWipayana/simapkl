@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('laporan_mingguan', function (Blueprint $table) {
+        Schema::create('laporan_mingguans', function (Blueprint $table) {
             $table->id();
             // $table->unsignedBigInteger('mahasiswa_id')->nullable();
             $table->foreignId('mahasiswa_id')->constrained('mahasiswas')->onDelete('cascade');
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('laporan_akhir', function (Blueprint $table) {
+        Schema::create('laporan_akhirs', function (Blueprint $table) {
             $table->id();
             // $table->unsignedBigInteger('mahasiswa_id')->nullable();
             $table->foreignId('mahasiswa_id')->constrained('mahasiswas')->onDelete('cascade');
@@ -32,7 +32,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('cv', function (Blueprint $table) {
+        Schema::create('cvs', function (Blueprint $table) {
             $table->id();
             // $table->unsignedBigInteger('mahasiswa_id')->nullable();
             $table->foreignId('mahasiswa_id')->constrained('mahasiswas')->onDelete('cascade');
@@ -46,8 +46,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('laporan-mingguan');
-        Schema::dropIfExists('laporan-akhir');
-        Schema::dropIfExists('cv');
+        Schema::dropIfExists('laporan-mingguans');
+        Schema::dropIfExists('laporan-akhirs');
+        Schema::dropIfExists('cvs');
     }
 };

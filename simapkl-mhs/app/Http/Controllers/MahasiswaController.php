@@ -39,12 +39,12 @@ class MahasiswaController extends Controller
 
         $mahasiswaId = Auth::guard('mahasiswa')->user()->id;
 
-        $laporanMingguan = DB::table('laporan_mingguan')
+        $laporanMingguan = DB::table('laporan_mingguans')
             ->where('mahasiswa_id', $mahasiswaId)
             ->get();
 
-        $laporanAkhir = DB::table('laporan_akhir')->where('mahasiswa_id', $mahasiswaId)->get();
-        $cv = DB::table('cv')->get();
+        $laporanAkhir = DB::table('laporan_akhirs')->where('mahasiswa_id', $mahasiswaId)->get();
+        $cv = DB::table('cvs')->get();
 
         // Kirim $skillLowonganMap ke view
         return view('dashboard.mahasiswa', compact('laporanMingguan', 'laporanAkhir', 'mahasiswa', 'cv', 'lowongan', 'skillLowonganMap'));
@@ -125,29 +125,48 @@ class MahasiswaController extends Controller
 
     public function uploadCV(Request $request)
     {
-        $request->validate([
-            'cv' => 'required|file|mimes:pdf,doc,docx|max:10240', // 10MB max
-        ]); 
+        try {
+            \Log::info('Memulai proses upload CV.');
 
-        $user = Auth::guard('mahasiswa')->user();
+            $request->validate([
+                'cv' => 'required|file|mimes:pdf,doc,docx|max:10240', // 10MB max
+            ]);
 
-        // Delete old CV if exists
-        if ($user->cv) {
-            Storage::delete('public/cvs/' . $user->cv->file_cv);
+            $user = Auth::guard('mahasiswa')->user();
+            if (!Auth::guard('mahasiswa')->check()) {
+                \Log::error('Mahasiswa belum login.');
+                return response()->json(['success' => false, 'message' => 'Silakan login kembali.'], 401);
+            }
+
+            if (!$request->hasFile('cv')) {
+                \Log::error('File tidak ditemukan.');
+                return response()->json(['success' => false, 'message' => 'File tidak ditemukan.'], 400);
+            }
+
+            // Delete old CV if exists
+            if ($user->cv) {
+                \Log::info('Menghapus CV lama: ' . $user->cv->file_cv);
+                Storage::delete('public/cv/' . $user->cv->file_cv);
+            }
+
+            // Store new CV
+            $file = $request->file('cv');
+            $fileName = 'cv_' . $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $filePath = $file->storeAs('cv', $fileName, 'public');
+            \Log::info('File disimpan di: ' . $filePath);
+
+            // Update or create CV record
+            $cv = $user->cv()->updateOrCreate(
+                ['mahasiswa_id' => $user->id],
+                ['file_cv' => $fileName]
+            );
+            \Log::info('Data CV disimpan: ' . json_encode($cv));
+
+            return response()->json(['success' => true, 'message' => 'CV berhasil diupload!']);
+        } catch (\Exception $e) {
+            \Log::error('Error saat upload CV: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan. Silakan coba lagi.'], 500);
         }
-
-        // Store new CV
-        $file = $request->file('cv');
-        $fileName = 'cv_' . $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
-        $filePath = $file->storeAs('public/cvs', $fileName);
-
-        // Update or create CV record
-        $user->cv()->updateOrCreate(
-            ['mahasiswa_id' => $user->id],
-            ['file_cv' => $fileName]
-        );
-
-        return response()->json(['success' => true, 'message' => 'CV berhasil diupload!']);
     }
 
     public function updateProfile(Request $request)

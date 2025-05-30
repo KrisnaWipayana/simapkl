@@ -15,37 +15,19 @@ class BerkasController extends Controller
 
         $mahasiswaId = auth()->guard('mahasiswa')->user()->id;
 
-        $laporanMingguan = DB::table('laporan_mingguan')
+        $laporanMingguan = DB::table('laporan_mingguans')
             ->where('mahasiswa_id', $mahasiswaId)
             ->get();
 
-        $laporanAkhir = DB::table('laporan_akhir')
+        $laporanAkhir = DB::table('laporan_akhirs')
             ->where('mahasiswa_id', $mahasiswaId)
             ->get();
 
-        $cv = DB::table('cv')
+        $cv = DB::table('cvs')
         ->where('mahasiswa_id', $mahasiswaId)
         ->get();
 
         return view('dashboard.berkas-mhs', compact('laporanMingguan', 'laporanAkhir', 'cv'));
-    }
-
-    // Upload CV
-    public function uploadCV(Request $request)
-    {
-        $request->validate([
-            'cv' => 'required|file|mimes:pdf,doc,docx|max:2048'
-        ]);
-
-        $file = $request->file('cv');
-        $path = $file->store('cv');
-
-        CV::create([
-            'mahasiswa_id' => Auth::id(),
-            'file_cv' => $path
-        ]);
-
-        return redirect()->back()->with('success', 'CV berhasil diupload!');
     }
 
     // Delete CV
@@ -53,27 +35,39 @@ class BerkasController extends Controller
     {
         $cv = CV::findOrFail($id);
         
-        // Check if user owns the file
+        // Pastikan hanya pemilik file yang dapat menghapus
         if ($cv->mahasiswa_id != Auth::id()) {
-            abort(403);
+            abort(403, 'Anda tidak memiliki izin untuk menghapus file ini.');
         }
 
-        Storage::delete($cv->file_cv);
+        // Hapus file dari storage
+        if ($cv->file_cv && Storage::exists('public/cv/' . $cv->file_cv)) {
+            Storage::delete('public/cv/' . $cv->file_cv);
+        }
+
+        // Hapus data dari database
         $cv->delete();
 
         return redirect()->back()->with('success', 'CV berhasil dihapus!');
     }
 
-    // Download CV
     public function downloadCV($id)
     {
         $cv = CV::findOrFail($id);
-        
-        // Check if user owns the file
+
+        // Pastikan hanya pemilik file yang dapat mengunduh
         if ($cv->mahasiswa_id != Auth::id()) {
-            abort(403);
+            abort(403, 'Anda tidak memiliki izin untuk mengunduh file ini.');
         }
 
-        return Storage::download($cv->file_cv);
+        $filePath = 'cv/' . $cv->file_cv;
+
+        // Gunakan disk 'public' untuk periksa file
+        if (!Storage::disk('public')->exists($filePath)) {
+            abort(404, 'File tidak ditemukan.');
+        }
+
+        // Unduh file dari disk 'public'
+        return Storage::disk('public')->download($filePath);
     }
 }
