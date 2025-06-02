@@ -50,102 +50,98 @@ class MahasiswaController extends Controller
         return view('dashboard.mahasiswa', compact('laporanMingguan', 'laporanAkhir', 'mahasiswa', 'cv', 'lowongan', 'skillLowonganMap'));
     }
 
-    function lowonganDetails(Request $request) 
+    function lowonganDetails(Request $request)
     {
         $lowongan = DB::table('lowongans')
-        ->join('perusahaans', 'lowongans.perusahaan_id', '=', 'perusahaans.id')
-        ->select(
-            'lowongans.*',
-            'perusahaans.nama as nama_perusahaan',
-            'perusahaans.alamat as alamat_perusahaan')
-        ->where('lowongans.id', $request->id)
-        ->first();
+            ->join('perusahaans', 'lowongans.perusahaan_id', '=', 'perusahaans.id')
+            ->select(
+                'lowongans.*',
+                'perusahaans.nama as nama_perusahaan',
+                'perusahaans.alamat as alamat_perusahaan'
+            )
+            ->where('lowongans.id', $request->id)
+            ->first();
 
         $mahasiswaId = Auth::guard('mahasiswa')->user()->id;
 
         $skillMahasiswa = DB::table('mahasiswa_skill')
-        ->join('skills', 'mahasiswa_skill.skill_id', '=', 'skills.id')
-        ->where('mahasiswa_skill.mahasiswa_id', $mahasiswaId)
-        ->pluck('skills.nama', 'skills.id');
+            ->join('skills', 'mahasiswa_skill.skill_id', '=', 'skills.id')
+            ->where('mahasiswa_skill.mahasiswa_id', $mahasiswaId)
+            ->pluck('skills.nama', 'skills.id');
 
         // Ambil skill yang dibutuhkan lowongan
         $skillLowongan = DB::table('lowongan_skill')
-        ->join('skills', 'lowongan_skill.skill_id', '=', 'skills.id')
-        ->where('lowongan_skill.lowongan_id', $lowongan->id)
-        ->pluck('skills.nama');
+            ->join('skills', 'lowongan_skill.skill_id', '=', 'skills.id')
+            ->where('lowongan_skill.lowongan_id', $lowongan->id)
+            ->pluck('skills.nama');
 
         return view('dashboard.lowongan-details', compact('lowongan', 'skillMahasiswa', 'skillLowongan'));
     }
 
     public function profileMahasiswa(Request $request)
-{
-    $user = Auth::guard('mahasiswa')->user();
+    {
+        $user = Auth::guard('mahasiswa')->user();
 
-    // Ambil data mahasiswa
-    $mahasiswa = DB::table('mahasiswas')
-        ->where('id', $user->id)
-        ->first();
+        // Ambil data mahasiswa
+        $mahasiswa = DB::table('mahasiswas')
+            ->where('id', $user->id)
+            ->first();
 
-    $mahasiswaId = Auth::guard('mahasiswa')->user()->id;
+        $mahasiswaId = Auth::guard('mahasiswa')->user()->id;
 
-    // Ambil skill mahasiswa (join ke tabel skills)
-    $skills = DB::table('mahasiswa_skill')
-        ->join('skills', 'mahasiswa_skill.skill_id', '=', 'skills.id')
-        ->where('mahasiswa_skill.mahasiswa_id', $user->id)
-        ->select('skills.nama')
-        ->get();
+        // Ambil skill mahasiswa (join ke tabel skills)
+        $skills = DB::table('mahasiswa_skill')
+            ->join('skills', 'mahasiswa_skill.skill_id', '=', 'skills.id')
+            ->where('mahasiswa_skill.mahasiswa_id', $user->id)
+            ->select('skills.nama')
+            ->get();
 
-    $skillMahasiswa = DB::table('mahasiswa_skill')
-        ->join('skills', 'mahasiswa_skill.skill_id', '=', 'skills.id')
-        ->where('mahasiswa_skill.mahasiswa_id', $mahasiswaId)
-        ->pluck('skills.nama');
+        $skillMahasiswa = DB::table('mahasiswa_skill')
+            ->join('skills', 'mahasiswa_skill.skill_id', '=', 'skills.id')
+            ->where('mahasiswa_skill.mahasiswa_id', $mahasiswaId)
+            ->pluck('skills.nama');
 
-    $perusahaan = DB::table('perusahaans')
-        ->where('id', $mahasiswa->perusahaan_id)
-        ->select('nama as nama_perusahaan')
-        ->first();
+        $perusahaan = DB::table('perusahaans')
+            ->where('id', $mahasiswa->perusahaan_id)
+            ->select('nama as nama_perusahaan')
+            ->first();
 
-    $lowongan = DB::table('lowongans')
-        ->where('id', $mahasiswa->lowongan_id)
-        ->select('judul as nama_lowongan')
-        ->first();
+        $lowongan = DB::table('lowongans')
+            ->where('id', $mahasiswa->lowongan_id)
+            ->select('judul as nama_lowongan')
+            ->first();
 
-    $prodi = DB::table('prodis')
-    ->where('id', $mahasiswa->prodi_id)
-    ->select('nama as nama_prodi')
-    ->first();
-        
-    $jurusan = DB::table('jurusans')
-    ->where('id', $mahasiswa->jurusan_id)
-    ->select('nama as nama_jurusan')
-    ->first();
+        $prodi = DB::table('prodis')
+            ->where('id', $mahasiswa->prodi_id)
+            ->select('nama as nama_prodi')
+            ->first();
 
-    return view('dashboard.profile-mhs', compact('mahasiswa', 'skills', 'prodi', 'jurusan', 'perusahaan', 'lowongan', 'skillMahasiswa'));
-}
+        $jurusan = DB::table('jurusans')
+            ->where('id', $mahasiswa->jurusan_id)
+            ->select('nama as nama_jurusan')
+            ->first();
+
+        return view('dashboard.profile-mhs', compact('mahasiswa', 'skills', 'prodi', 'jurusan', 'perusahaan', 'lowongan', 'skillMahasiswa'));
+    }
 
     public function uploadCV(Request $request)
     {
         try {
-            \Log::info('Memulai proses upload CV.');
-
             $request->validate([
                 'cv' => 'required|file|mimes:pdf,doc,docx|max:10240', // 10MB max
             ]);
 
             $user = Auth::guard('mahasiswa')->user();
             if (!Auth::guard('mahasiswa')->check()) {
-                \Log::error('Mahasiswa belum login.');
                 return response()->json(['success' => false, 'message' => 'Silakan login kembali.'], 401);
             }
 
             if (!$request->hasFile('cv')) {
-                \Log::error('File tidak ditemukan.');
                 return response()->json(['success' => false, 'message' => 'File tidak ditemukan.'], 400);
             }
 
             // Delete old CV if exists
             if ($user->cv) {
-                \Log::info('Menghapus CV lama: ' . $user->cv->file_cv);
                 Storage::delete('public/cv/' . $user->cv->file_cv);
             }
 
@@ -153,18 +149,15 @@ class MahasiswaController extends Controller
             $file = $request->file('cv');
             $fileName = 'cv_' . $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
             $filePath = $file->storeAs('cv', $fileName, 'public');
-            \Log::info('File disimpan di: ' . $filePath);
 
             // Update or create CV record
             $cv = $user->cv()->updateOrCreate(
                 ['mahasiswa_id' => $user->id],
                 ['file_cv' => $fileName]
             );
-            \Log::info('Data CV disimpan: ' . json_encode($cv));
 
             return response()->json(['success' => true, 'message' => 'CV berhasil diupload!']);
         } catch (\Exception $e) {
-            \Log::error('Error saat upload CV: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Terjadi kesalahan. Silakan coba lagi.'], 500);
         }
     }
@@ -202,9 +195,9 @@ class MahasiswaController extends Controller
         try {
             $query = $request->input('q');
             $skills = \App\Models\Skill::where('nama', 'like', '%' . $query . '%')
-                        ->limit(10)
-                        ->get(['id', 'nama as text']); // Ubah 'nama' menjadi 'text' untuk kompatibilitas select2
-            
+                ->limit(10)
+                ->get(['id', 'nama as text']); // Ubah 'nama' menjadi 'text' untuk kompatibilitas select2
+
             return response()->json($skills);
         } catch (\Exception $e) {
             return response()->json([
@@ -221,21 +214,21 @@ class MahasiswaController extends Controller
             $request->validate([
                 'skill_id' => 'required|exists:skills,id',
             ]);
-            
+
             $mahasiswa = Auth::guard('mahasiswa')->user();
-            
+
             // Cek apakah skill sudah ada
             if ($mahasiswa->skills()->where('skill_id', $request->skill_id)->exists()) {
                 return response()->json([
-                    'success' => false, 
+                    'success' => false,
                     'message' => 'Skill sudah ditambahkan sebelumnya'
                 ], 400);
             }
-            
+
             $mahasiswa->skills()->attach($request->skill_id);
-            
+
             $skill = \App\Models\Skill::find($request->skill_id);
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Skill berhasil ditambahkan',
@@ -265,10 +258,10 @@ class MahasiswaController extends Controller
             $request->validate([
                 'skill_id' => 'required|exists:skills,id',
             ]);
-            
+
             $mahasiswa = Auth::guard('mahasiswa')->user();
             $mahasiswa->skills()->detach($request->skill_id);
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Skill berhasil dihapus'

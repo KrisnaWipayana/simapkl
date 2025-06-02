@@ -24,8 +24,8 @@ class BerkasController extends Controller
             ->get();
 
         $cv = DB::table('cvs')
-        ->where('mahasiswa_id', $mahasiswaId)
-        ->get();
+            ->where('mahasiswa_id', $mahasiswaId)
+            ->get();
 
         return view('dashboard.berkas-mhs', compact('laporanMingguan', 'laporanAkhir', 'cv'));
     }
@@ -34,7 +34,7 @@ class BerkasController extends Controller
     public function deleteCV($id)
     {
         $cv = CV::findOrFail($id);
-        
+
         // Pastikan hanya pemilik file yang dapat menghapus
         if ($cv->mahasiswa_id != Auth::id()) {
             abort(403, 'Anda tidak memiliki izin untuk menghapus file ini.');

@@ -211,7 +211,7 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                @foreach($laporanMingguan as $laporan)
+                                @forelse($laporanMingguan as $laporan)
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">{{ $laporan->judul_laporan }}</td>
                                     <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
@@ -241,7 +241,10 @@
                                         </form>  
                                     </td>
                                 </tr>
-                                @endforeach
+                                @empty
+                                <tr>
+                                    <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">Tidak ada laporan mingguan yang ditemukan.</td>  
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -272,7 +275,7 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                @foreach($laporanAkhir as $laporan)
+                                @forelse($laporanAkhir as $laporan)
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">{{ $laporan->judul_laporan }}</td>
                                     <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
@@ -304,7 +307,10 @@
                                         </form>
                                     </td>
                                 </tr>
-                                @endforeach
+                                @empty
+                                <tr>
+                                    <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">Tidak ada laporan akhir yang ditemukan.</td>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -333,7 +339,7 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                @foreach($cv as $file)
+                                @forelse($cv as $file)
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">{{ $file->file_cv }}</td>
                                     <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
@@ -349,7 +355,10 @@
                                         </form>                                            
                                     </td>
                                 </tr>
-                                @endforeach
+                                @empty
+                                <tr>
+                                    <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">Kamu belum pernah mengupload CV.</td>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
