@@ -53,7 +53,7 @@
             <a href="#" class="text-sm text-black-600 hover:text-blue-500">Lupa password?</a>
         </div>
         <div class="bg-gray-50 px-8 py-4 text-center">
-            <a href="{{ route('login') }}" class="text-sm text-black-600 font-sans hover:text-blue-500">Kembali</a>
+            <a href="{{ route('welcome') }}" class="text-sm text-black-600 font-sans hover:text-blue-500">Kembali</a>
         </div>
     </div>
 </body>

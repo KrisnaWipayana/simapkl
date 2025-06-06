@@ -34,7 +34,7 @@ class LaporanController extends Controller
     public function deleteLaporanMingguan($id)
     {
         $LaporanMingguan = LaporanMingguan::findOrFail($id);
-        
+
         // Pastikan hanya pemilik file yang dapat menghapus
         if ($LaporanMingguan->mahasiswa_id != Auth::id()) {
             abort(403, 'Anda tidak memiliki izin untuk menghapus laporan ini.');
@@ -58,7 +58,6 @@ class LaporanController extends Controller
         $file = $request->file('file_laporan');
         $fileName = 'Laporan _ ' . time() . '.' . $file->getClientOriginalExtension();
         $path = $file->storeAs('laporanAkhir', $fileName, 'public');
-            \Log::info('File disimpan di: ' . $path);
 
         LaporanAkhir::create([
             'mahasiswa_id' => Auth::id(),
@@ -75,26 +74,26 @@ class LaporanController extends Controller
     public function downloadLaporanAkhir($id)
     {
         $laporanAkhir = LaporanAkhir::findOrFail($id);
-        
+
         // Check if user owns the file
         if ($laporanAkhir->mahasiswa_id != Auth::id()) {
             abort(403);
         }
 
-        $filePath = 'laporanAkhir/' . $laporanAkhir->file_laporan;
+        $filePath = storage_path('app/public/laporanAkhir/' . $laporanAkhir->file_laporan); // Fixed field name
 
-        if (!Storage::disk('public')->exists($filePath)) {
+        if (!file_exists($filePath)) {
             abort(404, 'File tidak ditemukan.');
         }
 
-        return Storage::disk('public')->download($filePath);
+        return response()->download($filePath);
     }
 
     // Delete Laporan Akhir
     public function deleteLaporanAkhir($id)
     {
         $laporanAkhir = LaporanAkhir::findOrFail($id);
-        
+
         // Pastikan hanya pemilik file yang dapat menghapus
         if ($laporanAkhir->mahasiswa_id != Auth::id()) {
             abort(403, 'Anda tidak memiliki izin untuk menghapus laporan ini.');

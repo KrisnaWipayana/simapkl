@@ -3,15 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Berkas;
+use App\Models\Lowongan;
 use App\Models\Mahasiswa;
-use Database\Seeders\lowongan;
-use Database\Seeders\perusahaan;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use function Laravel\Prompts\select;
+use App\Mail\ApplicationSent;
+use Database\Seeders\perusahaan;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use function Laravel\Prompts\select;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class MahasiswaController extends Controller
 {
@@ -164,15 +166,18 @@ class MahasiswaController extends Controller
 
     public function updateProfile(Request $request)
     {
-        $mahasiswa = Auth::guard('mahasiswa')->user();
+        $user = Auth::guard('mahasiswa')->user();
 
         $request->validate([
             'nama' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:mahasiswas,email,' . $mahasiswa->id,
+            'email' => 'required|email|max:255|unique:mahasiswas,email,' . $user->id,
             'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'skills' => 'nullable|array',
             'skills.*' => 'exists:skills,id',
         ]);
+
+        // Ambil model Mahasiswa berdasarkan id user
+        $mahasiswa = \App\Models\Mahasiswa::findOrFail($user->id);
 
         $mahasiswa->nama = $request->nama;
         $mahasiswa->email = $request->email;
@@ -207,7 +212,6 @@ class MahasiswaController extends Controller
         }
     }
 
-    // Perbaiki method addSkill
     public function addSkill(Request $request): JsonResponse
     {
         try {
@@ -251,7 +255,6 @@ class MahasiswaController extends Controller
         }
     }
 
-    // Perbaiki method removeSkill
     public function removeSkill(Request $request): JsonResponse
     {
         try {
@@ -278,5 +281,38 @@ class MahasiswaController extends Controller
                 'message' => 'Terjadi kesalahan: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function emailForm(Request $request, $lowonganId)
+    {
+        $lowongan = Lowongan::findOrFail($lowonganId);
+        $user = Auth::guard('mahasiswa')->user();
+
+        return view('dashboard.application-email', [
+            'email' => $user->email,
+            'subject' => $lowongan->judul . ' - ' . $user->nama,
+            'lowongan' => $lowongan, // Tambahkan variable ini
+        ]);
+    }
+
+    public function sendEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'subject' => 'required|string',
+            'email_message' => 'required|string',
+            // 'cv' => 'required|file|mimes:pdf,doc,docx|max:10240',
+        ]);
+
+        // Simpan CV jika diperlukan
+        // $cvPath = $request->file('cv')->store('cvs', 'public');
+
+        Mail::to('perusahaan@example.com')->send(new ApplicationSent(
+            $request->email,
+            $request->subject,
+            $request->email_message
+        ));
+
+        return back()->with('success', 'Lamaran berhasil dikirim!');
     }
 }

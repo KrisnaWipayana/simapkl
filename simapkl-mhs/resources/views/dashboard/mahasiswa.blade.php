@@ -31,7 +31,7 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
                                 @foreach ($lowongan as $lwg)
                                     <button
-                                        @click="show = true; detail = {{ Js::from($lwg) }}"
+                                        @click= "show = true; detail = {{ Js::from($lwg) }}"
                                         class="flex flex-col space-y-2 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg shadow hover:shadow-md transition text-left w-full"
                                     >
                                         <div>

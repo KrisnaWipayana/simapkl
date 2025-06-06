@@ -1,4 +1,3 @@
-<!-- resources/views/lowongan-details.blade.php -->
 @extends('layout.app')
 <title>
     {{ $lowongan->judul }} di {{ $lowongan->nama_perusahaan }}
@@ -167,29 +166,6 @@
                         </p>
                     </div>
 
-                    <!-- Profile Stats -->
-                    <div class="space-y-4 mb-6">
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm text-gray-600 dark:text-gray-400">Informasi Terisi</span>
-                            <span class="text-sm font-semibold text-blue-600 dark:text-blue-400">85%</span>
-                        </div>
-                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                            <div class="bg-blue-600 h-2 rounded-full" style="width: 85%"></div>
-                        </div>
-                    </div>
-
-                    <!-- Quick Stats -->
-                    <div class="grid grid-cols-2 gap-4 mb-6">
-                        <div class="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                            <div class="text-lg font-semibold text-gray-900 dark:text-white">12</div>
-                            <div class="text-xs text-gray-600 dark:text-gray-400">Lamaran</div>
-                        </div>
-                        <div class="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                            <div class="text-lg font-semibold text-gray-900 dark:text-white">3</div>
-                            <div class="text-xs text-gray-600 dark:text-gray-400">Interview</div>
-                        </div>
-                    </div>
-
                     <!-- Quick Actions -->
                     <div class="space-y-3">
                         <button onclick="showEditProfileModal()" class="w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium py-2 px-4 rounded-lg text-sm transition-colors duration-200">
@@ -198,23 +174,28 @@
                         <button onclick="showUploadModal()" class="w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium py-2 px-4 rounded-lg text-sm transition-colors duration-200">
                             Upload CV
                         </button>
-                        <button class="w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium py-2 px-4 rounded-lg text-sm transition-colors duration-200">
+                        {{-- <button class="w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium py-2 px-4 rounded-lg text-sm transition-colors duration-200">
                             Riwayat Lamaran
-                        </button>
+                        </button> --}}
                     </div>
 
                     <!-- User Skills -->
                     <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                         <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">Skill kamu:</h4>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
-                            @foreach ( $skillMahasiswa as $skill )
+                            @forelse ( $skillMahasiswa as $skill )
                             <div class="flex items-start space-x-3">
                                 <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                                 <div>
                                     <p class="text-xs text-gray-600 dark:text-gray-400">{{ $skill }}</p> 
                                 </div>
                             </div>
-                            @endforeach
+                            @empty
+                                <div>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400">Kosong</p> 
+                                </div>
+                            </div>
+                            @endforelse
                         </div>
                     </div>
                 </div>
@@ -368,9 +349,11 @@
                     <button onclick="closeApplicationAlert()" class="flex-1 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200">
                         Batal
                     </button>
-                    <button onclick="submitApplication()" class="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-200">
-                        Ya, Lamar
-                    </button>
+                    <a href="{{ route('application.email', ['lowonganId' => $lowongan->id]) }}">
+                        <button class="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                            Ya, Lamar
+                        </button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -414,9 +397,43 @@
         }
 
         function submitApplication() {
-            // Here you would typically submit the application to your backend
-            alert('Lamaran berhasil dikirim!');
-            closeApplicationAlert();
+            const form = document.getElementById('uploadForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.textContent;
+
+            // Disable button and show loading state
+            submitBtn.textContent = 'Mengirim...';
+            submitBtn.disabled = true;
+
+            // Create FormData
+            const formData = new FormData(form);
+
+            // Send AJAX request
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        alert('Lamaran berhasil dikirim!');
+                        closeApplicationAlert();
+                        window.location.reload();
+                    } else {
+                        alert(data.message || 'Terjadi kesalahan saat mengirim lamaran.');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat mengirim lamaran.');
+                })
+                .finally(() => {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                });
         }
 
         function showEditProfileModal() {

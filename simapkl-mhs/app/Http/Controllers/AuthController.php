@@ -3,27 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Models\Mahasiswa;
+use App\Models\Dospem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+
 class AuthController extends Controller
 {
- public function showLoginMhs()
+    public function showLoginMhs()
     {
         return view('auth.loginMhs');
     }
-    
-public function showLoginDospem()
+
+    public function showLoginDospem()
     {
         return view('auth.loginDospem');
     }
 
-public function showLoginPerusahaan()
+    public function showLoginPerusahaan()
     {
         return view('auth.loginPerusahaan');
     }
 
- public function loginMhs(Request $request)
+    public function loginMhs(Request $request)
     {
         $request->validate([
             'nim'    => 'required|string',
@@ -40,11 +42,11 @@ public function showLoginPerusahaan()
         return redirect()->intended('/dashboard/mahasiswa');
     }
 
- public function loginDospem()
+    public function loginDospem(Request $request)
     {
-        $credentials = request()->only('nip', 'password');
-        
-        if (auth()->attempt($credentials)) {
+        $credentials = $request->only('nip', 'password');
+
+        if (Auth::guard('dospem')->attempt($credentials)) {
             return redirect()->intended('/dashboard/dospem');
         }
 
@@ -53,11 +55,11 @@ public function showLoginPerusahaan()
         ]);
     }
 
- public function loginPerusahaan()
+    public function loginPerusahaan(Request $request)
     {
-        $credentials = request()->only('email', 'password');
+        $credentials = $request->only('email', 'password');
 
-        if (auth()->attempt($credentials)) {
+        if (Auth::guard('perusahaan')->attempt($credentials)) {
             return redirect()->intended('/dashboard/perusahaan');
         }
 
@@ -66,9 +68,19 @@ public function showLoginPerusahaan()
         ]);
     }
 
-    public function logout()
-        {
-            auth()->logout();
-            return redirect('/');
+    public function logout(Request $request)
+    {
+        if (Auth::guard('mahasiswa')->check()) {
+            Auth::guard('mahasiswa')->logout();
+        } elseif (Auth::guard('dospem')->check()) {
+            Auth::guard('dospem')->logout();
+        } elseif (Auth::guard('perusahaan')->check()) {
+            Auth::guard('perusahaan')->logout();
+        } else {
+            Auth::logout();
         }
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/');
+    }
 }

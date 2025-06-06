@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\CV;
-use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -12,7 +12,6 @@ class BerkasController extends Controller
 {
     public function index()
     {
-
         $mahasiswaId = auth()->guard('mahasiswa')->user()->id;
 
         $laporanMingguan = DB::table('laporan_mingguans')
@@ -55,19 +54,41 @@ class BerkasController extends Controller
     {
         $cv = CV::findOrFail($id);
 
-        // Pastikan hanya pemilik file yang dapat mengunduh
         if ($cv->mahasiswa_id != Auth::id()) {
             abort(403, 'Anda tidak memiliki izin untuk mengunduh file ini.');
         }
 
-        $filePath = 'cv/' . $cv->file_cv;
+        $filePath = public_path('storage/cv/' . $cv->file_cv);
 
-        // Gunakan disk 'public' untuk periksa file
-        if (!Storage::disk('public')->exists($filePath)) {
+        if (!file_exists($filePath)) {
             abort(404, 'File tidak ditemukan.');
         }
 
-        // Unduh file dari disk 'public'
-        return Storage::disk('public')->download($filePath);
+        return response()->download($filePath);
+    }
+
+    public function uploadCV(Request $request)
+    {
+        $request->validate([
+            'cv' => 'required|file|mimes:pdf,doc,docx|max:10240',
+        ]);
+
+        $user = Auth::guard('mahasiswa')->user();
+
+        if (!$request->hasFile('cv')) {
+            return response()->json(['success' => false, 'message' => 'File tidak ditemukan.'], 400);
+        }
+
+        $file = $request->file('cv');
+        $fileName = 'cv_' . $user->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+        $filePath = $file->storeAs('public/cv', $fileName);
+
+        // Simpan path ke database pada tabel CV
+        $cv = new CV();
+        $cv->mahasiswa_id = $user->id;
+        $cv->file_cv = $fileName;
+        $cv->save();
+
+        return response()->json(['success' => true, 'message' => 'CV berhasil diupload!']);
     }
 }

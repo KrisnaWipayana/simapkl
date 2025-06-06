@@ -317,7 +317,7 @@
                 </div>
             </div>
 
-            <!-- CV Section -->
+            {{-- <!-- CV Section -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
                 <div class="bg-blue-600 px-6 py-4 flex items-center justify-between">
                     <h2 class="text-xl font-semibold text-white">Upload CV</h2>
@@ -363,7 +363,7 @@
                         </table>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
 </div>
