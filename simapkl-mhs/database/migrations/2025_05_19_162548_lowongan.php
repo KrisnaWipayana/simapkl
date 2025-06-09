@@ -16,11 +16,11 @@ return new class extends Migration
             // $table->unsignedBigInteger('perusahaan_id')->nullable();
             $table->foreignId('perusahaan_id')->constrained('perusahaans')->onDelete('cascade');
             $table->string('judul');
-            $table->text('deskripsi');
-            $table->date('tanggal_mulai');
-            $table->date('tanggal_selesai');
+            $table->text('deskripsi')->nullable();
+            $table->date('tanggal_mulai')->nullable();
+            $table->date('tanggal_selesai')->nullable();
             $table->timestamps();
-        }); 
+        });
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\CV;
 use Illuminate\Http\Request;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -11,6 +12,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Mail\Mailables\Attachment;
 
 class ApplicationSent extends Mailable
 {
@@ -23,15 +25,15 @@ class ApplicationSent extends Mailable
     public $email;
     public $subject;
     public $email_message;
-    // public $cv_filename;
+    public $cvPath;
 
-    public function __construct($email, $subject, $email_message)
+    public function __construct($email, $subject, $email_message, $cvPath)
     {
         $this->user = auth()->guard('mahasiswa')->user();
         $this->email = $email;
         $this->subject = $subject;
         $this->email_message = $email_message;
-        // $this->cv_filename = $cv_filename;
+        $this->cvPath = $cvPath;
     }
 
     /**
@@ -50,10 +52,15 @@ class ApplicationSent extends Mailable
     {
         return $this->subject($this->subject)
             ->view('dashboard.application-form')
+            ->replyTo($this->email)
             ->with([
                 'email' => $this->email,
                 'subject' => $this->subject,
                 'email_message' => $this->email_message,
+            ])
+            ->attach(storage_path('app/private/' . $this->cvPath), [
+                'as' => 'CV_' . $this->user->nama . '.pdf',
+                'mime' => 'application/pdf'
             ]);
     }
 
@@ -83,14 +90,22 @@ class ApplicationSent extends Mailable
             'email' => 'required|email',
             'subject' => 'required|string',
             'email_message' => 'required|string',
+            'cvPath' => 'required|file|mimes:pdf,doc,docx|max:10240',
         ]);
+
+        // Simpan file CV
+        $file = $request->file('cv');
+        $fileName = 'cv_' . time() . '.' . $file->getClientOriginalExtension();
+        $cvPath = $file->storeAs('cv', $fileName, 'public');
 
         Mail::to($request->email)->send(new ApplicationSent(
             $request->email,
             $request->subject,
-            $request->email_message
+            $request->email_message,
+            $cvPath,
         ));
 
+        // dd($request);
         return back()->with('success', 'Lamaran berhasil dikirim!');
     }
 }

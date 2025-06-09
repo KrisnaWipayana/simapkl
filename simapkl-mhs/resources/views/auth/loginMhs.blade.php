@@ -5,6 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIMAPKL - LOGIN</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        mint: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         .card {
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
@@ -15,7 +37,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 flex items-center justify-center min-h-screen p-4">
+<body class="bg-gradient-to-br from-mint-50 to-white flex items-center justify-center min-h-screen p-4">
     <div class="bg-white rounded-lg shadow-sm w-full max-w-sm overflow-hidden">
         <div class="p-8">
             <div class="text-center mb-8">
@@ -38,11 +60,11 @@
                                type="password" name="password" placeholder="Password">
                     </div>
                     
-                    <button class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md mt-4">
+                    <button class="w-full bg-green-200 text-green-700 dark:text-green-500 dark:bg-green-900 hover:bg-green-700 hover:text-green-200 transition-colors duration-200 py-2 px-4 rounded-md mt-4">
                         Lanjutkan
                     </button>
                     <a href="">
-                    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md mt-4">
+                    <button class="w-full bg-blue-200 text-blue-700 dark:text-blue-500 dark:bg-blue-900 hover:bg-blue-700 hover:text-blue-200 transition-colors duration-200 py-2 px-4 rounded-md mt-4">
                         Daftar
                     </button>
                     </a>

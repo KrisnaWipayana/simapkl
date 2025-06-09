@@ -29,7 +29,7 @@
                                 <h1 class="text-3xl font-sans font-semibold text-gray-900 dark:text-white mb-2">
                                     {{ $lowongan->judul }}
                                 </h1>
-                                <p class="text-lg text-blue-600 dark:text-blue-400 font-medium">
+                                <p class="text-lg text-green-700 dark:text-green-500 font-medium">
                                     {{ $lowongan->nama_perusahaan }}
                                 </p>
                                 <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
@@ -83,7 +83,7 @@
                         <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Skill yang Dibutuhkan</h2>
                         <div class="flex flex-wrap gap-2">
                             @forelse($skillLowongan as $skill)
-                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+                                <span class="bg-green-200 text-green-700 dark:text-green-500 dark:bg-green-900 text-xs font-medium px-2.5 py-0.5 rounded">
                                     {{ $skill }}
                                 </span>
                             @empty
@@ -133,11 +133,8 @@
                     <!-- Action Buttons -->
                     <div class="p-6">
                         <div class="flex flex-col sm:flex-row gap-3">
-                            <button onclick="showApplicationAlert()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                            <button onclick="showApplicationAlert()" class="flex-1 bg-green-200 text-green-700 dark:text-green-500 dark:bg-green-900 hover:bg-green-700 hover:text-green-200 font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
                                 Lamar Sekarang
-                            </button>
-                            <button class="flex-1 sm:flex-none bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
-                                Simpan Lowongan
                             </button>
                         </div>
                     </div>
@@ -171,11 +168,8 @@
                         <button onclick="showEditProfileModal()" class="w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium py-2 px-4 rounded-lg text-sm transition-colors duration-200">
                             Edit Profile
                         </button>
-                        <button onclick="showUploadModal()" class="w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium py-2 px-4 rounded-lg text-sm transition-colors duration-200">
+                        {{-- <button onclick="showUploadModal()" class="w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium py-2 px-4 rounded-lg text-sm transition-colors duration-200">
                             Upload CV
-                        </button>
-                        {{-- <button class="w-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium py-2 px-4 rounded-lg text-sm transition-colors duration-200">
-                            Riwayat Lamaran
                         </button> --}}
                     </div>
 
@@ -185,7 +179,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
                             @forelse ( $skillMahasiswa as $skill )
                             <div class="flex items-start space-x-3">
-                                <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                                <div class="w-2 h-2 bg-green-700 rounded-full mt-1 flex-shrink-0"></div>
                                 <div>
                                     <p class="text-xs text-gray-600 dark:text-gray-400">{{ $skill }}</p> 
                                 </div>
@@ -336,8 +330,8 @@
     <div id="applicationAlert" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-sm mx-4">
             <div class="p-6">
-                <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-blue-100 dark:bg-blue-900 rounded-full">
-                    <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-green-100 dark:bg-green-900 rounded-full">
+                    <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                 </div>
@@ -346,14 +340,14 @@
                     Apakah Anda yakin ingin melamar untuk posisi <strong>{{ $lowongan->judul }}</strong> di <strong>{{ $lowongan->perusahaan->nama ?? $lowongan->nama_perusahaan }}</strong>?
                 </p>
                 <div class="flex space-x-3">
-                    <button onclick="closeApplicationAlert()" class="flex-1 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200">
-                        Batal
-                    </button>
-                    <a href="{{ route('application.email', ['lowonganId' => $lowongan->id]) }}">
-                        <button class="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                    <a href="{{ route('application.email', ['lowonganId' => $lowongan->id]) }}" class="flex-1">
+                        <button class="w-full px-4 py-2 text-sm font-medium rounded-lg bg-green-200 text-green-700 dark:text-green-500 dark:bg-green-900 hover:bg-green-700 hover:text-green-200 transition-colors duration-200">
                             Ya, Lamar
                         </button>
                     </a>
+                    <button onclick="closeApplicationAlert()" class="px-3 py-2 text-sm text-green-700 bg-gray-100 font-medium rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200">
+                        Batal
+                    </button>
                 </div>
             </div>
         </div>

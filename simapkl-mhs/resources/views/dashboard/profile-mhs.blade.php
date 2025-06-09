@@ -219,7 +219,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
                     @forelse($skillMahasiswa as $skill)
                         <div class="flex items-center space-x-2">
-                            <div class="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
+                            <div class="w-2 h-2 bg-green-700 rounded-full flex-shrink-0"></div>
                             <span class="text-xs text-gray-600 dark:text-gray-400">{{ $skill }}</span>
                         </div>
                     @empty

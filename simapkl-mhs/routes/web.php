@@ -115,7 +115,7 @@ Route::prefix('dashboard')->group(
             // Application
             Route::get('/application/form/{lowonganId}', [MahasiswaController::class, 'emailForm'])
                 ->name('application.email');
-            Route::post('/application/send', [MahasiswaController::class, 'sendEmail'])
+            Route::post('/application/send/', [MahasiswaController::class, 'sendEmail'])
                 ->name('send.email');
         });
 

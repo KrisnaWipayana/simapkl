@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pembimbings', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('dospem_id')->constrained('dospems')->onDelete('cascade');
-        $table->foreignId('mahasiswa_id')->constrained('mahasiswas')->onDelete('cascade');
-        $table->timestamps();
-    });
+            $table->id();
+            $table->foreignId('dospem_id')->constrained('dospems')->onDelete('cascade')->nullable();
+            $table->foreignId('mahasiswa_id')->constrained('mahasiswas')->onDelete('cascade')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**

@@ -43,7 +43,7 @@
                                             @if (!empty($skillLowonganMap[$lwg->id]) && count($skillLowonganMap[$lwg->id]) > 0)
                                                 <div class="mt-2 flex flex-nowrap overflow-x-auto pb-2 scrollbar-hide">
                                                     @foreach ($skillLowonganMap[$lwg->id] as $skill)
-                                                        <span class="flex-shrink-0 bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">
+                                                        <span class="flex-shrink-0 text-xs font-medium mr-2 px-2.5 py-0.5 rounded bg-green-200 text-green-700 dark:text-green-500 dark:bg-green-900">
                                                             {{ $skill }}
                                                         </span>
                                                     @endforeach

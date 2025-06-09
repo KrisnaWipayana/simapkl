@@ -23,8 +23,8 @@ return new class extends Migration
 
         Schema::create('lowongan_skill', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('lowongan_id')->constrained('lowongans')->onDelete('cascade');
-            $table->foreignId('skill_id')->constrained('skills')->onDelete('cascade');
+            $table->foreignId('lowongan_id')->constrained('lowongans')->onDelete('cascade')->nullable();
+            $table->foreignId('skill_id')->constrained('skills')->onDelete('cascade')->nullable();
             $table->timestamps();
         });
     }

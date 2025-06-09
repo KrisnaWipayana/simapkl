@@ -7,6 +7,7 @@ use App\Models\Lowongan;
 use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use App\Mail\ApplicationSent;
+use App\Models\CV;
 use Database\Seeders\perusahaan;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -297,20 +298,26 @@ class MahasiswaController extends Controller
 
     public function sendEmail(Request $request)
     {
+        // $cv = CV::findOrFail($id);
+
+        // if ($cv->mahasiswa_id != Auth::id()) {
+        //     abort(403, 'Anda tidak memiliki izin untuk mengunduh file ini.');
+        // }
+
         $request->validate([
             'email' => 'required|email',
             'subject' => 'required|string',
             'email_message' => 'required|string',
-            // 'cv' => 'required|file|mimes:pdf,doc,docx|max:10240',
+            'cv' => 'required|file|mimes:pdf,doc,docx|max:10240',
         ]);
 
-        // Simpan CV jika diperlukan
-        // $cvPath = $request->file('cv')->store('cvs', 'public');
+        $cvPath = $request->file('cv')->store('cvs');
 
         Mail::to('perusahaan@example.com')->send(new ApplicationSent(
             $request->email,
             $request->subject,
-            $request->email_message
+            $request->email_message,
+            $cvPath
         ));
 
         return back()->with('success', 'Lamaran berhasil dikirim!');
