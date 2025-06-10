@@ -6,6 +6,7 @@ use App\Models\Mahasiswa;
 use App\Models\Dospem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -82,5 +83,46 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('/');
+    }
+
+    public function register()
+    {
+        $jurusans = DB::table('jurusans')
+            ->get();
+
+        $prodis = DB::table('prodis')
+            ->get();
+
+        return view('auth.registerMhs', compact('jurusans', 'prodis'));
+    }
+
+    public function registerPost(Request $request)
+    {
+
+        $request->validate([
+            'nim' => 'required|string',
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email',
+            'jurusan_id' => 'required',
+            'password' => 'required',
+            'password_confirmation' => 'required',
+            'prodi_id' => 'required',
+        ]);
+
+        if ($request->password_confirmation != $request->password) {
+            return redirect()->back()->with('password tidak cocok dengan konfirmasi');
+        }
+
+        $password = bcrypt($request->password);
+
+        Mahasiswa::create([
+            'nim' => $request->nim,
+            'nama' => $request->nama,
+            'email' => $request->email,
+            'jurusan_id' => $request->jurusan_id,
+            'password' => $password,
+            'prodi_id' => $request->prodi_id,
+        ]);
+        return redirect()->route('welcome')->with('success', 'Kamu berhasil terdaftar!');
     }
 }

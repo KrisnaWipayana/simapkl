@@ -8,6 +8,7 @@ use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 use App\Mail\ApplicationSent;
 use App\Models\CV;
+use App\Models\Dospem;
 use Database\Seeders\perusahaan;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -124,7 +125,15 @@ class MahasiswaController extends Controller
             ->select('nama as nama_jurusan')
             ->first();
 
-        return view('dashboard.profile-mhs', compact('mahasiswa', 'skills', 'prodi', 'jurusan', 'perusahaan', 'lowongan', 'skillMahasiswa'));
+        $dospem = DB::table('pembimbings')
+            ->join('dospems', 'pembimbings.dospem_id', "=", 'dospems.id')
+            ->where('mahasiswa_id', $mahasiswa->id)
+            ->select('dospems.nama as nama_dospem', 'pembimbings.dospem_id')
+            ->first();
+
+        $dosens = Dospem::all();
+
+        return view('dashboard.profile-mhs', compact('mahasiswa', 'skills', 'prodi', 'jurusan', 'perusahaan', 'lowongan', 'skillMahasiswa', 'dospem', 'dosens'));
     }
 
     public function uploadCV(Request $request)
@@ -195,6 +204,20 @@ class MahasiswaController extends Controller
 
         return redirect()->back()->with('success', 'Profil & skill berhasil diperbarui.');
     }
+
+    // public function updateStatus(Request $request)
+    // {
+
+    //     $user = Auth::guard('mahasiswa')->user();
+    //     $lowonganId = $request->input('lowongan_id'); // Pastikan lowongan_id dikirim dari form
+
+    //     DB::table('mahasiswas')
+    //         ->where('id', $user->id)
+    //         ->update([
+    //             'lowongan_id' => $lowonganId,
+    //             'perusahaan_id' => DB::table('lowongans')->where('id', $lowonganId)->value('perusahaan_id'),
+    //         ]);
+    // }
 
     public function searchSkills(Request $request): JsonResponse
     {
@@ -292,17 +315,12 @@ class MahasiswaController extends Controller
         return view('dashboard.application-email', [
             'email' => $user->email,
             'subject' => $lowongan->judul . ' - ' . $user->nama,
-            'lowongan' => $lowongan, // Tambahkan variable ini
+            'lowongan' => $lowongan,
         ]);
     }
 
     public function sendEmail(Request $request)
     {
-        // $cv = CV::findOrFail($id);
-
-        // if ($cv->mahasiswa_id != Auth::id()) {
-        //     abort(403, 'Anda tidak memiliki izin untuk mengunduh file ini.');
-        // }
 
         $request->validate([
             'email' => 'required|email',
@@ -321,5 +339,76 @@ class MahasiswaController extends Controller
         ));
 
         return back()->with('success', 'Lamaran berhasil dikirim!');
+    }
+
+    public function searchDospem(Request $request): JsonResponse
+    {
+        try {
+            $query = $request->input('q');
+            $dospems = Dospem::where('nama', 'like', '%' . $query . '%')
+                ->limit(10)
+                ->get(['id', 'nama as text', 'nip']);
+
+            return response()->json($dospems);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function assignDospem(Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'dospem_id' => 'required|exists:dospems,id',
+            ]);
+
+            $mahasiswa = Auth::guard('mahasiswa')->user();
+
+            // Cek apakah sudah ada pembimbing
+            $existingPembimbing = DB::table('pembimbings')
+                ->where('mahasiswa_id', $mahasiswa->id)
+                ->first();
+
+            if ($existingPembimbing) {
+                // Update pembimbing yang sudah ada
+                DB::table('pembimbings')
+                    ->where('id', $existingPembimbing->id)
+                    ->update(['dospem_id' => $request->dospem_id]);
+            } else {
+                // Buat pembimbing baru
+                DB::table('pembimbings')->insert([
+                    'dospem_id' => $request->dospem_id,
+                    'mahasiswa_id' => $mahasiswa->id,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            }
+
+            $dospem = Dospem::find($request->dospem_id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Dosen pembimbing berhasil ditetapkan',
+                'dospem' => [
+                    'id' => $dospem->id,
+                    'nama' => $dospem->nama,
+                    'nip' => $dospem->nip
+                ]
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak valid',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

@@ -18,8 +18,6 @@ class LaporanController extends Controller
             'deskripsi_laporan' => 'required|string',
         ]);
 
-        // $path = $file->store('laporan_mingguan');
-
         LaporanMingguan::create([
             'mahasiswa_id' => Auth::id(),
             'judul_laporan' => $request->judul_laporan,

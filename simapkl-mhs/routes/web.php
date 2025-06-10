@@ -18,7 +18,13 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
-// Group dengan prefix 'login'
+Route::get('/register', [AuthController::class, 'register'])
+    ->middleware('guest:mahasiswa')
+    ->name('register.mahasiswa');
+
+Route::post('/register', [AuthController::class, 'registerPost'])
+    ->name('register.mahasiswa.post');
+
 Route::prefix('login')->group(
     function () {
         Route::get('/mahasiswa', function () {
@@ -117,6 +123,9 @@ Route::prefix('dashboard')->group(
                 ->name('application.email');
             Route::post('/application/send/', [MahasiswaController::class, 'sendEmail'])
                 ->name('send.email');
+
+            Route::get('/dospem/search', [MahasiswaController::class, 'searchDospem'])->name('dospem.search');
+            Route::post('/dospem/assign', [MahasiswaController::class, 'assignDospem'])->name('dospem.assign');
         });
 
         Route::middleware('auth:dospem')->group(function () {
@@ -132,7 +141,3 @@ Route::prefix('dashboard')->group(
     }
 
 );
-
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

@@ -133,7 +133,7 @@
                     <!-- Action Buttons -->
                     <div class="p-6">
                         <div class="flex flex-col sm:flex-row gap-3">
-                            <button onclick="showApplicationAlert()" class="flex-1 bg-green-200 text-green-700 dark:text-green-500 dark:bg-green-900 hover:bg-green-700 hover:text-green-200 font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                            <button onclick="showApplicationAlert()" class="flex-1 bg-green-700 text-white dark:bg-green-800 hover:bg-green-700 font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
                                 Lamar Sekarang
                             </button>
                         </div>
@@ -301,7 +301,7 @@
                         <label class="block text-gray-700 dark:text-gray-300 mb-2">Skill</label>
                         <div id="selectedSkills" class="flex flex-wrap gap-2 mb-2">
                             @foreach($skillMahasiswa as $id => $skill)
-                                <span class="flex items-center bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300" data-id="{{ $id }}">
+                                <span class="flex items-center bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300" data-id="{{ $id }}">
                                     {{ $skill }}
                                     <button type="button" class="ml-1 text-red-500 hover:text-red-700 focus:outline-none remove-skill-btn" data-id="{{ $id }}">
                                         &times;
@@ -317,7 +317,7 @@
                         <button type="button" onclick="closeEditProfileModal()" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200">
                             Batal
                         </button>
-                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-green-700 rounded-lg hover:bg-green-800 transition-colors duration-200">
                             Simpan Perubahan
                         </button>
                     </div>

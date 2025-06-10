@@ -60,13 +60,12 @@
                                type="password" name="password" placeholder="Password">
                     </div>
                     
-                    <button class="w-full bg-green-200 text-green-700 dark:text-green-500 dark:bg-green-900 hover:bg-green-700 hover:text-green-200 transition-colors duration-200 py-2 px-4 rounded-md mt-4">
+                    <button class="w-full bg-green-700 text-white dark:text-green-500 dark:bg-green-900 hover:bg-green-800 hover:text-green-200 transition-colors duration-200 py-2 px-4 rounded-md mt-4">
                         Lanjutkan
                     </button>
-                    <a href="">
-                    <button class="w-full bg-blue-200 text-blue-700 dark:text-blue-500 dark:bg-blue-900 hover:bg-blue-700 hover:text-blue-200 transition-colors duration-200 py-2 px-4 rounded-md mt-4">
+                    <a href="{{ route('register.mahasiswa') }}"
+                        class="block text-center w-full bg-blue-700 text-white dark:text-blue-500 dark:bg-blue-900 hover:bg-blue-800 transition-colors duration-200 py-2 px-4 rounded-md mt-4">
                         Daftar
-                    </button>
                     </a>
                 </div>
             </form>
