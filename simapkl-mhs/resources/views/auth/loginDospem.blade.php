@@ -51,7 +51,7 @@
                                type="password" name="password" placeholder="Password">
                     </div>
                     
-                    <button class="w-full bg-green-700 text-white dark:text-green-500 dark:bg-green-900 hover:bg-green-800 transition-colors duration-200 py-2 px-4 rounded-md mt-4">
+                    <button class="w-full bg-green-500 text-white dark:text-green-500 dark:bg-green-900 hover:bg-green-600 transition-colors duration-200 py-2 px-4 rounded-md mt-4">
                         Lanjutkan
                     </button>
                 </div>

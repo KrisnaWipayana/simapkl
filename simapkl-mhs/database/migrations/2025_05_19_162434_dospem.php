@@ -12,16 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('dospems', function (Blueprint $table) {
-        $table->id();
-        // $table->foreignId('mahasiswa_id')->nullable()->constrained('mahasiswas')->onDelete('cascade');
-        $table->string('nip')->unique();
-        $table->string('nama');
-        $table->string('password');
-        $table->string('foto')->nullable();
-        $table->timestamps();
-        $table->rememberToken();
-    });
-
+            $table->id();
+            // $table->foreignId('mahasiswa_id')->nullable()->constrained('mahasiswas')->onDelete('cascade');
+            $table->string('nip')->unique();
+            $table->string('nama');
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->string('foto')->nullable();
+            $table->timestamps();
+            $table->rememberToken();
+        });
     }
 
     /**
@@ -32,5 +32,3 @@ return new class extends Migration
         Schema::dropIfExists('dospems');
     }
 };
-
-
