@@ -2,6 +2,19 @@
 <title>Profil Mahasiswa - SIMAPKL</title>
 
 @section('content')
+<style>
+ #perusahaanResults, #lowonganResults {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.dark #perusahaanResults, .dark #lowonganResults {
+    background-color: #374151;
+    border-color: #4b5563;
+}   
+</style>
 <div class="p-4 min-h-screen">
 
     <!-- Modal Edit Profile -->
@@ -59,6 +72,46 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Update Status Magang -->
+    <div id="magangModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl mx-4">
+            <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Update Status Magang</h3>
+                <button onclick="closeMagangModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="mb-4">
+                    <label class="block text-gray-700 dark:text-gray-300 mb-2">Cari Perusahaan:</label>
+                    <input type="text" id="searchPerusahaan" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-400 dark:bg-gray-700 dark:text-white" placeholder="Ketik nama perusahaan...">
+                    <div id="perusahaanResults" class="mt-2 max-h-60 overflow-y-auto hidden">
+                        <!-- Hasil pencarian perusahaan akan muncul di sini -->
+                    </div>
+                </div>
+
+                <div id="lowonganSection" class="mb-4 hidden">
+                    <label class="block text-gray-700 dark:text-gray-300 mb-2">Pilih Lowongan:</label>
+                    <input type="text" id="searchLowongan" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-400 dark:bg-gray-700 dark:text-white" placeholder="Ketik nama lowongan...">
+                    <div id="lowonganResults" class="mt-2 max-h-60 overflow-y-auto hidden">
+                        <!-- Hasil pencarian lowongan akan muncul di sini -->
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                    <button onclick="closeMagangModal()" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600">
+                        Batal
+                    </button>
+                    <button onclick="updateStatusMagang()" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700">
+                        Simpan
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -139,19 +192,7 @@
                                 <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Email</p>
                                 <p class="text-sm text-gray-900 dark:text-white font-medium">{{ Auth::guard('mahasiswa')->user()->email }}</p>
                             </div>
-                        </div>
-
-                        {{-- <div class="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl">
-                            <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
-                                <svg class="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Program Studi</p>
-                                <p class="text-sm text-gray-900 dark:text-white font-medium">{{ $prodi->nama_prodi ?? '-' }}</p>
-                            </div>
-                        </div> --}}
+                        </div> 
                     </div>
 
                     <!-- Academic Info -->
@@ -196,7 +237,10 @@
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Status Magang</h3>
                     <div class="w-3 h-3 bg-gray rounded-full animate-pulse"></div>
                 </div>
-                <span class="text-xs text-gray-600 dark:text-gray-400">Belum berstatus magang</span>
+                <span class="text-xs text-gray-600 dark:text-gray-400">Belum berstatus magang, </span>
+                <a href="javascript:void(0)" onclick="openMagangModal()">
+                    <span class="underline text-xs text-green-600 dark:text-blue-400">ingin mengupdate status?</span>
+                </a>
                 @else
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Status Magang</h3>
@@ -212,6 +256,12 @@
                         <p class="text-sm text-blue-700 dark:text-blue-300 mb-1">Posisi</p>
                         <p class="font-bold text-blue-900 dark:text-blue-100">{{ $lowongan->nama_lowongan ?? 'Belum ditentukan' }}</p>
                     </div>
+                </div>
+                <div class="mt-4">
+                    <span class="text-xs text-gray-600 dark:text-gray-400">Ingin mengubah status magang? </span>
+                        <a href="javascript:void(0)" onclick="openMagangModal()">
+                        <span class="underline text-xs text-green-600 dark:text-blue-400">klik disini.</span>
+                </a>
                 </div>
                 @endif
             </div>
@@ -247,9 +297,14 @@
                         <p class="font-medium text-gray-900 dark:text-white">{{ $dospem->nama_dospem }}</p>
                         <p class="text-sm text-gray-600 dark:text-gray-400">NIP: {{ DB::table('dospems')->where('id', $dospem->dospem_id)->value('nip') }}</p>
                     </div>
+                @else
+                    <div class="mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <p class="font-small text-sm text-gray-900 dark:text-white">Belum Mendapat Dosen Pembimbing</p>
+                        {{-- <p class="text-sm text-gray-600 dark:text-gray-400">NIP: {{ DB::table('dospems')->where('id', $dospem->dospem_id)->value('nip') }}</p> --}}
+                    </div>
                 @endif
                 
-                <div class="relative">
+                {{-- <div class="relative">
                     <input type="text" id="dospemSearch" placeholder="Cari dosen pembimbing..." 
                         class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-400 dark:bg-gray-700 dark:text-white">
                     <div id="dospemSuggestions" class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded shadow-lg hidden"></div>
@@ -257,7 +312,7 @@
                 
                 <small class="text-gray-500 dark:text-gray-400 mt-2 block">
                     Ketik nama dosen untuk mencari dan menetapkan pembimbing
-                </small>
+                </small> --}}
             </div>
         </div>
     </div>
@@ -434,98 +489,151 @@
         });
     });
 
-    // Dospem search functionality
-    document.addEventListener('DOMContentLoaded', function () {
-        const dospemSearch = document.getElementById('dospemSearch');
-        const dospemSuggestions = document.getElementById('dospemSuggestions');
-        
-        let debounceTimeout = null;
+    // Variabel global untuk menyimpan data sementara
+    let selectedPerusahaan = null;
+    let selectedLowongan = null;
 
-        dospemSearch.addEventListener('input', function () {
-            clearTimeout(debounceTimeout);
-            const query = this.value.trim();
-            if (query.length < 2) {
-                dospemSuggestions.classList.add('hidden');
-                return;
-            }
-            
-            debounceTimeout = setTimeout(() => {
-                fetch(`{{ route('dospem.search') }}?q=${encodeURIComponent(query)}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        dospemSuggestions.innerHTML = '';
-                        
-                        if (data.length === 0) {
-                            const noResult = document.createElement('div');
-                            noResult.className = 'px-3 py-2 text-gray-500 dark:text-gray-400';
-                            noResult.textContent = 'Tidak ditemukan dosen';
-                            dospemSuggestions.appendChild(noResult);
-                        } else {
-                            data.forEach(dospem => {
-                                const btn = document.createElement('button');
-                                btn.type = 'button';
-                                btn.className = 'block w-full text-left px-3 py-2 hover:bg-blue-100 dark:hover:bg-blue-900';
-                                btn.innerHTML = `
-                                    <div class="font-medium">${dospem.text}</div>
-                                    <div class="text-xs text-gray-500">NIP: ${dospem.nip}</div>
-                                `;
-                                btn.onclick = function () {
-                                    assignDospem(dospem.id, dospem.text, dospem.nip);
-                                    dospemSuggestions.classList.add('hidden');
-                                    dospemSearch.value = '';
-                                };
-                                dospemSuggestions.appendChild(btn);
-                            });
-                        }
-                        dospemSuggestions.classList.remove('hidden');
-                    })
-                    .catch(error => {
-                        console.error('Error searching dospem:', error);
-                        dospemSuggestions.classList.add('hidden');
-                    });
-            }, 300);
-        });
+    function openMagangModal() {
+        document.getElementById('magangModal').classList.remove('hidden');
+        document.getElementById('magangModal').classList.add('flex');
+        document.getElementById('searchPerusahaan').focus();
+    }
 
-        // Assign dospem via AJAX
-        function assignDospem(dospemId, dospemNama, dospemNip) {
-            fetch('{{ route('dospem.assign') }}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ dospem_id: dospemId })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => { throw err; });
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    // Reload page to show updated dospem
-                    window.location.reload();
-                } else {
-                    alert(data.message || 'Gagal menetapkan dosen pembimbing');
-                }
-            })
-            .catch(error => {
-                console.error('Error assigning dospem:', error);
-                alert(error.message || 'Terjadi kesalahan saat menetapkan dosen pembimbing');
-            });
+    function closeMagangModal() {
+        document.getElementById('magangModal').classList.add('hidden');
+        document.getElementById('magangModal').classList.remove('flex');
+        resetMagangModal();
+    }
+
+    function resetMagangModal() {
+        selectedPerusahaan = null;
+        selectedLowongan = null;
+        document.getElementById('searchPerusahaan').value = '';
+        document.getElementById('searchLowongan').value = '';
+        document.getElementById('perusahaanResults').innerHTML = '';
+        document.getElementById('perusahaanResults').classList.add('hidden');
+        document.getElementById('lowonganSection').classList.add('hidden');
+        document.getElementById('lowonganResults').innerHTML = '';
+        document.getElementById('lowonganResults').classList.add('hidden');
+    }
+
+    // Pencarian perusahaan
+    document.getElementById('searchPerusahaan').addEventListener('input', function(e) {
+        const query = e.target.value.trim();
+        if (query.length < 2) {
+            document.getElementById('perusahaanResults').innerHTML = '';
+            document.getElementById('perusahaanResults').classList.add('hidden');
+            return;
         }
 
-        // Hide suggestions on blur
-        dospemSearch.addEventListener('blur', function () {
-            setTimeout(() => dospemSuggestions.classList.add('hidden'), 200);
-        });
+        fetch(`/dashboard/search/perusahaan?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                const resultsContainer = document.getElementById('perusahaanResults');
+                resultsContainer.innerHTML = '';
+                
+                if (data.length === 0) {
+                    resultsContainer.innerHTML = '<div class="p-2 text-gray-500">Tidak ditemukan perusahaan</div>';
+                } else {
+                    data.forEach(perusahaan => {
+                        const div = document.createElement('div');
+                        div.className = 'p-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer';
+                        div.innerHTML = `
+                            <div class="font-medium">${perusahaan.nama}</div>
+                            <div class="text-xs text-gray-500">${perusahaan.alamat}</div>
+                        `;
+                        div.addEventListener('click', () => selectPerusahaan(perusahaan));
+                        resultsContainer.appendChild(div);
+                    });
+                }
+                
+                resultsContainer.classList.remove('hidden');
+            });
     });
+
+    // Pencarian lowongan
+    document.getElementById('searchLowongan').addEventListener('input', function(e) {
+        if (!selectedPerusahaan) return;
+        
+        const query = e.target.value.trim();
+        if (query.length < 2) {
+            document.getElementById('lowonganResults').innerHTML = '';
+            document.getElementById('lowonganResults').classList.add('hidden');
+            return;
+        }
+
+        fetch(`/dashboard/search/lowongan?perusahaan_id=${selectedPerusahaan.id}&q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                const resultsContainer = document.getElementById('lowonganResults');
+                resultsContainer.innerHTML = '';
+                
+                if (data.length === 0) {
+                    resultsContainer.innerHTML = '<div class="p-2 text-gray-500">Tidak ditemukan lowongan</div>';
+                } else {
+                    data.forEach(lowongan => {
+                        const div = document.createElement('div');
+                        div.className = 'p-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer';
+                        div.innerHTML = `
+                            <div class="font-medium">${lowongan.judul}</div>
+                        `;
+                        div.addEventListener('click', () => selectLowongan(lowongan));
+                        resultsContainer.appendChild(div);
+                    });
+                }
+                
+                resultsContainer.classList.remove('hidden');
+            });
+    });
+
+    function selectPerusahaan(perusahaan) {
+        selectedPerusahaan = perusahaan;
+        selectedLowongan = null;
+        document.getElementById('searchPerusahaan').value = perusahaan.nama;
+        document.getElementById('perusahaanResults').classList.add('hidden');
+        document.getElementById('lowonganSection').classList.remove('hidden');
+        document.getElementById('searchLowongan').focus();
+    }
+
+    function selectLowongan(lowongan) {
+        selectedLowongan = lowongan;
+        document.getElementById('searchLowongan').value = lowongan.judul;
+        document.getElementById('lowonganResults').classList.add('hidden');
+    }
+
+    async function updateStatusMagang() {
+        if (!selectedPerusahaan || !selectedLowongan) {
+            alert('Silakan pilih perusahaan dan lowongan terlebih dahulu');
+            return;
+        }
+
+        try {
+            const response = await fetch('/dashboard/mahasiswa/update-magang', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    perusahaan_id: selectedPerusahaan.id,
+                    lowongan_id: selectedLowongan.id
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('Status magang berhasil diperbarui');
+                closeMagangModal();
+                location.reload(); // Refresh untuk menampilkan perubahan
+            } else {
+                throw new Error(data.message || 'Gagal memperbarui status magang');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert(error.message);
+        }
+    }
 </script>
 @endsection

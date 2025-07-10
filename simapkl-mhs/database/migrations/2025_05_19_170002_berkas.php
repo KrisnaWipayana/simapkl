@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('judul_laporan');
             $table->text('deskripsi_laporan');
             $table->string('file_laporan')->nullable();
+            $table->string('file_revisi')->nullable();
             $table->string('status_laporan')->nullable();
             $table->timestamps();
         });

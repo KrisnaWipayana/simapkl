@@ -16,6 +16,8 @@ class Mahasiswa extends Authenticatable
         'foto',
         'prodi_id',
         'jurusan_id',
+        'perusahaan_id',
+        'lowongan_id',
     ];
 
     protected $hidden = [

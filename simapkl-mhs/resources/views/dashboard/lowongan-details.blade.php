@@ -50,21 +50,27 @@
                             <div>
                                 <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Tanggal Mulai</h3>
                                 <p class="text-gray-900 dark:text-white">
-                                    {{ \Carbon\Carbon::parse($lowongan->tanggal_mulai)->format('d F Y') }}
+                                    {{ \Carbon\Carbon::parse($lowongan->tanggal_mulai)->format('d M Y') }}
                                 </p>
                             </div>
                             <div>
                                 <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Tanggal Selesai</h3>
                                 <p class="text-gray-900 dark:text-white">
-                                    {{ \Carbon\Carbon::parse($lowongan->tanggal_selesai)->format('d F Y') }}
+                                    {{ \Carbon\Carbon::parse($lowongan->tanggal_selesai)->format('d M Y') }}
                                 </p>
                             </div>
-                        </div>
-                        <div class="mt-4">
+                            <div>
                             <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Durasi</h3>
-                            <p class="text-gray-900 dark:text-white">
-                                {{ \Carbon\Carbon::parse($lowongan->tanggal_mulai)->diffInMonths(\Carbon\Carbon::parse($lowongan->tanggal_selesai)) }} Bulan
-                            </p>
+                                <p class="text-gray-900 dark:text-white">
+                                    {{ \Carbon\Carbon::parse($lowongan->tanggal_mulai)->diffInMonths(\Carbon\Carbon::parse($lowongan->tanggal_selesai)) }} Bulan
+                                </p>
+                            </div>
+                            <div>
+                            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Lowongan Dibuka Hingga</h3>
+                                <p class="text-gray-900 dark:text-white">
+                                    {{ \Carbon\Carbon::parse($lowongan->expired)->format('d M Y') }}
+                                </p>
+                            </div>
                         </div>
                     </div>
 

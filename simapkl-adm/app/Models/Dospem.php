@@ -12,4 +12,9 @@ class Dospem extends Model
         'nama',
         'email',
     ];
+    public function mahasiswa()
+    {
+        return $this->belongsToMany(Mahasiswa::class, 'dospem_id', 'mahasiswa_id');
+    }
+    
 }

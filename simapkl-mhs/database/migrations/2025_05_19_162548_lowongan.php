@@ -19,6 +19,8 @@ return new class extends Migration
             $table->text('deskripsi')->nullable();
             $table->date('tanggal_mulai')->nullable();
             $table->date('tanggal_selesai')->nullable();
+            $table->date('expired')->nullable();
+            $table->integer('kuota')->nullable();
             $table->timestamps();
         });
     }

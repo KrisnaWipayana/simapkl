@@ -74,20 +74,22 @@
                 </thead>
                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                     @foreach($mahasiswaBimbingan as $mhs)
-                    <tr>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">{{ $mhs->nama }}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ $mhs->nim }}</td>
-                        <td class="px-4 py-3 whitespace-nowrap">
-                            @if($mhs->lowongan_id)
-                                <span class="px-2 py-1 text-xs rounded-full bg-mint-100 dark:bg-mint-900 text-mint-800 dark:text-mint-200">Sedang PKL</span>
-                            @else
-                                <span class="px-2 py-1 text-xs rounded-full bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200">Tidak PKL</span>
-                            @endif
-                        </td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                            {{ $mhs->perusahaan->nama ?? '-' }}
-                        </td>
-                    </tr>
+                        <tr>
+                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
+                                <a href="{{ route('mahasiswa.detail', ['id' => $mhs->id]) }}" class="text-gray-500">{{ $mhs->nama }}</a>
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ $mhs->nim }}</td>
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                @if($mhs->lowongan_id)
+                                    <span class="px-2 py-1 text-xs rounded-full bg-mint-100 dark:bg-mint-900 text-mint-800 dark:text-mint-200">Sedang PKL</span>
+                                @else
+                                    <span class="px-2 py-1 text-xs rounded-full bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200">Tidak PKL</span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                {{ $mhs->perusahaan?->nama ?? '-' }}
+                            </td>
+                        </tr>
                     @endforeach
                 </tbody>
             </table>

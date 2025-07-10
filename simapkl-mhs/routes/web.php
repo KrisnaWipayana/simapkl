@@ -52,47 +52,42 @@ Route::prefix('login')->group(
 
 Route::post('/logout/mahasiswa', function () {
     Auth::guard('mahasiswa')->logout();
-    return redirect()->route('login.mahasiswa')->with('success', 'Berhasil logout');
+    return redirect()->route('welcome')->with('success', 'Berhasil logout');
 })->name('logout.mahasiswa');
 
 Route::post('/logout/dospem', function () {
     Auth::guard('dospem')->logout();
-    return redirect()->route('login.dospem')->with('success', 'Berhasil logout');
+    return redirect()->route('welcome')->with('success', 'Berhasil logout');
 })->name('logout.dospem');
-
-Route::post('/logout/perusahaan', function () {
-    Auth::guard('perusahaan')->logout();
-    return redirect()->route('login.perusahaan')->with('success', 'Berhasil logout');
-})->name('logout.perusahaan');
-
 
 Route::prefix('dashboard')->group(
     function () {
         Route::middleware('auth:mahasiswa')->group(function () {
             Route::get('/mahasiswa', [MahasiswaController::class, 'index'])
                 ->name('dashboard.mahasiswa');
-
             Route::get('/mahasiswa/lowongan/{id}', [MahasiswaController::class, 'lowonganDetails'])
                 ->name('dashboard.lowongan.details');
 
+            //profile mahasiswa
             Route::get('/mahasiswa/profile', [MahasiswaController::class, 'profileMahasiswa'])
                 ->name('dashboard.profile.mhs');
-
             Route::put('/mahasiswa/profile', [MahasiswaController::class, 'updateProfile'])
                 ->name('profile.update');
+            Route::get('/search/perusahaan', [PerusahaanController::class, 'searchPerusahaan']);
+            Route::get('/search/lowongan', [PerusahaanController::class, 'searchLowongan']);
 
+            Route::post('/mahasiswa/update-magang', [MahasiswaController::class, 'updateMagang']);
+            
             Route::post('/upload-cv', [MahasiswaController::class, 'uploadCV'])
                 ->name('cv.upload');
-
             Route::get('/skills/search', [MahasiswaController::class, 'searchSkills'])
                 ->name('skills.search');
-
             Route::post('/profile/skill/add', [MahasiswaController::class, 'addSkill'])
                 ->name('profile.skill.add');
-
             Route::post('/profile/skill/remove', [MahasiswaController::class, 'removeSkill'])
                 ->name('profile.skill.remove');
 
+            //berkas mahasiswa
             Route::get('/dashboard/berkas', [BerkasController::class, 'index'])
                 ->name('dashboard.berkas.mhs');
 
@@ -131,6 +126,24 @@ Route::prefix('dashboard')->group(
         Route::middleware('auth:dospem')->group(function () {
             Route::get('/dospem', [DospemController::class, 'index'])
                 ->name('dashboard.dospem');
+
+            //profile dospem
+            Route::get('/dospem/profile', [DospemController::class, 'dosenProfile'])
+            ->name('dashboard.profile.dsn');
+            Route::put('/dospem/profile', [DospemController::class, 'updateProfile'])
+                ->name('profile.update.dsn');
+
+            //laporan mahasiswa    
+            Route::get('/dospem/mahasiswa/{id}', [DospemController::class, 'mahasiswaDetail'])
+                ->name('mahasiswa.detail');
+            Route::post('/laporan-akhir/{id}/update-status', [DospemController::class, 'updateStatusLaporan'])
+                ->name('dosen.update-status-laporan');  
+            Route::get('/laporan/akhir/download/{id}', [DospemController::class, 'downloadLaporanAkhir'])
+                ->name('laporan.akhir.download');
+            Route::post('/laporan-akhir/{laporanId}/upload-revisi', [DospemController::class, 'sendRevisi'])
+                ->name('laporan.akhir.upload.revisi');
+            Route::post('/laporan-akhir/{laporan}/update-status', [DospemController::class, 'updateStatusLaporanAkhir'])
+                ->name('laporan.akhir.update.status');
         });
 
         Route::middleware('auth:perusahaan')->group(function () {

@@ -18,6 +18,7 @@ class DospemResource extends Resource
     protected static ?string $model = Dospem::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'Data Dosen';
 
     public static function form(Form $form): Form
     {
@@ -31,10 +32,6 @@ class DospemResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
                     ->email()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('password')
-                    ->password()
                     ->required()
                     ->maxLength(255),
             ]);

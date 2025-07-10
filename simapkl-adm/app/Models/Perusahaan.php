@@ -13,4 +13,8 @@ class Perusahaan extends Model
         'alamat',
         'no_telp',
     ];
+
+    public function skill() {
+        return $this->belongsToMany(Skill::class, 'lowongan_skills')->withTimeStamps();
+    }
 }

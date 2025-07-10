@@ -13,6 +13,7 @@ class LaporanAkhir extends Model
         'judul_laporan',
         'deskripsi_laporan',
         'file_laporan',
+        'file_revisi',
         'status_laporan'
     ];
 

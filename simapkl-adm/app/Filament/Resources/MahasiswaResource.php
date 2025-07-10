@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\MahasiswaResource\Pages;
 use App\Filament\Resources\MahasiswaResource\RelationManagers;
 use App\Models\Mahasiswa;
+use App\Models\Dospem;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,12 +13,15 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\DB;
+use Filament\Notifications\Notification;
 
 class MahasiswaResource extends Resource
 {
     protected static ?string $model = Mahasiswa::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'Data Mahasiswa';
 
     public static function form(Form $form): Form
     {
@@ -66,15 +70,8 @@ class MahasiswaResource extends Resource
                     ->label('Prodi')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('jurusan_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('perusahaan.nama')
-                    ->label('Perusahaan')
-                    ->sortable()
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('lowongan_id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('jurusan.nama')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -86,7 +83,7 @@ class MahasiswaResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

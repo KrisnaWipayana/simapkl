@@ -18,6 +18,7 @@ class PerusahaanResource extends Resource
     protected static ?string $model = Perusahaan::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'Data Perusahaan';
 
     public static function form(Form $form): Form
     {
@@ -30,16 +31,9 @@ class PerusahaanResource extends Resource
                     ->email()
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('password')
-                    ->password()
-                    ->required()
-                    ->maxLength(255),
                 Forms\Components\TextInput::make('alamat')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('koordinat')
-                    ->maxLength(255)
-                    ->default(null),
                 Forms\Components\TextInput::make('no_telp')
                     ->tel()
                     ->maxLength(255)
@@ -56,8 +50,6 @@ class PerusahaanResource extends Resource
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('alamat')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('koordinat')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('no_telp')
                     ->searchable(),

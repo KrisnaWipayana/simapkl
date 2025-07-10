@@ -143,14 +143,13 @@
                     @endif
                 </div>
                 <div class="p-6">
-                    <div class="overflow-x-auto">
+                    <div class="max-h-96 overflow-y-auto">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead class="bg-gray-50 dark:bg-gray-700">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Judul Laporan</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Tanggal Upload</th>                                    
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Deskripsi</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
@@ -162,7 +161,7 @@
                                         {{ \Carbon\Carbon::parse($laporan->created_at)->format('d M Y') }}
                                     </td>
                                     <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-300">{{ Str::limit($laporan->deskripsi_laporan, 50) }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    {{-- <td class="px-6 py-4 whitespace-nowrap">
                                         @if($laporan->status_laporan == 'Diterima')
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200">
                                                 Diterima
@@ -176,7 +175,7 @@
                                                 Menunggu
                                             </span>
                                         @endif
-                                    </td>
+                                    </td> --}}
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <form action="{{route('laporan.mingguan.delete', ['id' => $laporan->id]) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus laporan ini?');" style="display: inline;">
                                             @csrf
@@ -199,22 +198,52 @@
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
                 <div class="bg-green-700 px-6 py-4 flex items-center justify-between">
                     <h2 class="text-xl font-semibold text-white">Laporan Akhir</h2>
-                    @if (Auth::guard('mahasiswa')->user()->lowongan == null)
-                    <button class="px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-lg flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
-                        Kamu Belum Terdaftar Magang
-                    </button>
+
+                    @php
+                        $mahasiswa = Auth::guard('mahasiswa')->user();
+                    @endphp
+
+                    @if ($mahasiswa->lowongan == null)
+                        {{-- Mahasiswa BELUM terdaftar magang --}}
+                        @if (count($laporanMingguan) < 20)
+                            {{-- Belum magang tapi laporan mingguan sudah cukup --}}
+                            <button class="px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-lg flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                </svg>
+                                Kamu Belum Terdaftar Magang
+                            </button>
+                        @else
+                            {{-- Belum magang & laporan mingguan < 20 --}}
+                            <button class="px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-lg flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                </svg>
+                                Laporan Mingguan Masih Kurang
+                            </button>
+                        @endif
                     @else
-                    <button onclick="showUploadLaporanAkhirModal()" class="px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-lg flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
-                        Laporan Akhir
-                    </button>
+                        {{-- Mahasiswa SUDAH terdaftar magang --}}
+                        @if (count($laporanMingguan) >= 20)
+                            {{-- Laporan mingguan cukup --}}
+                            <button onclick="showUploadLaporanAkhirModal()" class="px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-lg flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                </svg>
+                                Upload Laporan Akhir
+                            </button>
+                        @else
+                            {{-- Sudah magang tapi laporan mingguan belum cukup --}}
+                            <button class="px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-lg flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                </svg>
+                                Laporan Mingguan Masih Kurang
+                            </button>
+                        @endif
                     @endif
                 </div>
+            </div>
                 <div class="p-6">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -222,7 +251,8 @@
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Judul Laporan</th>
                                     <th class ="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Tanggal Upload</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">File</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">File Laporan</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">File Revisi</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Aksi</th>
                                 </tr>
@@ -235,6 +265,7 @@
                                         {{ \Carbon\Carbon::parse($laporan->created_at)->format('d M Y') }}
                                     </td>
                                     <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-300">{{ $laporan->file_laporan }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-300"><a href="#">{{ $laporan->file_revisi }}</a></td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         @if($laporan->status_laporan == 'Diterima')
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200">
@@ -251,7 +282,7 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <a href="#" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-200 mr-3">Lihat</a>
+                                        {{-- <a href="#" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-200 mr-3">Lihat</a> --}}
                                         <a href="{{route('laporan.akhir.download', ['id' => $laporan->id]) }}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-200 mr-3">Unduh</a>
                                         <form action="{{route('laporan.akhir.delete', ['id' => $laporan->id]) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus Laporan ini?');" style="display: inline;">
                                             @csrf

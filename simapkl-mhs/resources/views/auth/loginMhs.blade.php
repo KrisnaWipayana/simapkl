@@ -70,9 +70,9 @@
                 </div>
             </form>
         </div>
-        <div class="bg-gray-50 px-8 py-4 border-t border-gray-200 text-center">
+        {{-- <div class="bg-gray-50 px-8 py-4 border-t border-gray-200 text-center">
             <a href="#" class="text-sm text-black-600 hover:text-blue-500">Lupa password?</a>
-        </div>
+        </div> --}}
         <div class="bg-gray-50 px-8 py-4 text-center">
             <a href="{{ route('welcome') }}" class="text-sm text-black-600 font-sans hover:text-blue-500">Kembali</a>
         </div>

@@ -22,6 +22,8 @@ class lowongan extends Seeder
                 'tanggal_selesai' => now()->addMonths(3),
                 'created_at' => now(),
                 'updated_at' => now(),
+                'expired' => now()->addMonths(6),
+                'kuota' => 2,
             ],
             [
                 'perusahaan_id' => 2,
@@ -31,6 +33,8 @@ class lowongan extends Seeder
                 'tanggal_selesai' => now()->addMonths(3),
                 'created_at' => now(),
                 'updated_at' => now(),
+                'expired' => now()->addMonths(6),
+                'kuota' => 2,
             ],
             [
                 'perusahaan_id' => 1,
@@ -40,6 +44,8 @@ class lowongan extends Seeder
                 'tanggal_selesai' => now()->addMonths(3),
                 'created_at' => now(),
                 'updated_at' => now(),
+                'expired' => now()->addMonths(6),
+                'kuota' => 1,
             ],
             [
                 'perusahaan_id' => 3,
@@ -49,6 +55,8 @@ class lowongan extends Seeder
                 'tanggal_selesai' => now()->addMonths(3),
                 'created_at' => now(),
                 'updated_at' => now(),
+                'expired' => now()->addMonths(6),
+                'kuota' => 3,
             ],
             [
                 'perusahaan_id' => 2,
@@ -58,6 +66,8 @@ class lowongan extends Seeder
                 'tanggal_selesai' => now()->addMonths(3),
                 'created_at' => now(),
                 'updated_at' => now(),
+                'expired' => now()->addMonths(6),
+                'kuota' => 5,
             ],
             [
                 'perusahaan_id' => 1,
@@ -67,6 +77,8 @@ class lowongan extends Seeder
                 'tanggal_selesai' => now()->addMonths(3),
                 'created_at' => now(),
                 'updated_at' => now(),
+                'expired' => now()->addMonths(6),
+                'kuota' => 6,
             ],
             [
                 'perusahaan_id' => 3,
@@ -76,6 +88,8 @@ class lowongan extends Seeder
                 'tanggal_selesai' => now()->addMonths(3),
                 'created_at' => now(),
                 'updated_at' => now(),
+                'expired' => now()->addMonths(6),
+                'kuota' => 2,
             ],
             [
                 'perusahaan_id' => 2,
@@ -85,6 +99,8 @@ class lowongan extends Seeder
                 'tanggal_selesai' => now()->addMonths(3),
                 'created_at' => now(),
                 'updated_at' => now(),
+                'expired' => now()->addMonths(6),
+                'kuota' => 4,
             ],
             [
                 'perusahaan_id' => 1,
@@ -94,6 +110,8 @@ class lowongan extends Seeder
                 'tanggal_selesai' => now()->addMonths(3),
                 'created_at' => now(),
                 'updated_at' => now(),
+                'expired' => now()->addMonths(6),
+                'kuota' => 10,
             ],
             [
                 'perusahaan_id' => 1,
@@ -103,6 +121,8 @@ class lowongan extends Seeder
                 'tanggal_selesai' => now()->addMonths(3),
                 'created_at' => now(),
                 'updated_at' => now(),
+                'expired' => now()->addMonths(6),
+                'kuota' => 9,
             ],
             [
                 'perusahaan_id' => 2,
@@ -112,6 +132,8 @@ class lowongan extends Seeder
                 'tanggal_selesai' => now()->addMonths(3),
                 'created_at' => now(),
                 'updated_at' => now(),
+                'expired' => now()->addMonths(6),
+                'kuota' => 1,
             ],
             [
                 'perusahaan_id' => 1,
@@ -121,6 +143,8 @@ class lowongan extends Seeder
                 'tanggal_selesai' => now()->addMonths(3),
                 'created_at' => now(),
                 'updated_at' => now(),
+                'expired' => now()->addMonths(6),
+                'kuota' => 4,
             ],
             [
                 'perusahaan_id' => 3,
@@ -130,6 +154,8 @@ class lowongan extends Seeder
                 'tanggal_selesai' => now()->addMonths(3),
                 'created_at' => now(),
                 'updated_at' => now(),
+                'expired' => now()->addMonths(6),
+                'kuota' => 5,
             ],
             [
                 'perusahaan_id' => 1,
@@ -139,6 +165,8 @@ class lowongan extends Seeder
                 'tanggal_selesai' => now()->addMonths(3),
                 'created_at' => now(),
                 'updated_at' => now(),
+                'expired' => now()->addMonths(6),
+                'kuota' => 9,
             ],
             [
                 'perusahaan_id' => 2,
@@ -148,6 +176,8 @@ class lowongan extends Seeder
                 'tanggal_selesai' => now()->addMonths(3),
                 'created_at' => now(),
                 'updated_at' => now(),
+                'expired' => now()->addMonths(6),
+                'kuota' => 3,
             ],
             [
                 'perusahaan_id' => 3,
@@ -157,6 +187,8 @@ class lowongan extends Seeder
                 'tanggal_selesai' => now()->addMonths(3),
                 'created_at' => now(),
                 'updated_at' => now(),
+                'expired' => now()->addMonths(6),
+                'kuota' => 2,
             ],
             [
                 'perusahaan_id' => 1,
@@ -166,6 +198,8 @@ class lowongan extends Seeder
                 'tanggal_selesai' => now()->addMonths(3),
                 'created_at' => now(),
                 'updated_at' => now(),
+                'expired' => now()->addMonths(6),
+                'kuota' => 6,
             ],
             [
                 'perusahaan_id' => 2,
@@ -175,6 +209,8 @@ class lowongan extends Seeder
                 'tanggal_selesai' => now()->addMonths(3),
                 'created_at' => now(),
                 'updated_at' => now(),
+                'expired' => now()->addMonths(6),
+                'kuota' => 8,
             ],
             [
                 'perusahaan_id' => 3,
@@ -184,6 +220,8 @@ class lowongan extends Seeder
                 'tanggal_selesai' => now()->addMonths(3),
                 'created_at' => now(),
                 'updated_at' => now(),
+                'expired' => now()->addMonths(6),
+                'kuota' => 1,
             ],
             [
                 'perusahaan_id' => 1,
@@ -193,7 +231,10 @@ class lowongan extends Seeder
                 'tanggal_selesai' => now()->addMonths(3),
                 'created_at' => now(),
                 'updated_at' => now(),
+                'expired' => now()->addMonths(6),
+                'kuota' => 4,
             ],
         ]);
     }
 }
+

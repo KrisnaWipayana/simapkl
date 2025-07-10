@@ -130,16 +130,16 @@
                     <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-4 uppercase tracking-wider">Menu Utama</h4>
                     <ul class="space-y-3">
                         <li>
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 flex items-center space-x-2">
+                            <a href="{{ route('welcome') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 flex items-center space-x-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a4 4 0 118 0v4M8 11h8"/>
                                 </svg>
-                                <span>Dashboard</span>
+                                <span>Home Page</span>
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 flex items-center space-x-2">
+                            <a href="{{ route('dashboard.mahasiswa') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 flex items-center space-x-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 002 2h2a2 2 0 002-2V4"/>
                                 </svg>
@@ -147,15 +147,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 flex items-center space-x-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                </svg>
-                                <span>Logbook</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 flex items-center space-x-2">
+                            <a href="{{ route('dashboard.profile.mhs') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 flex items-center space-x-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                 </svg>
@@ -168,32 +160,32 @@
                 <div>
                     <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-4 uppercase tracking-wider">Bantuan</h4>
                     <ul class="space-y-3">
-                        <li>
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 flex items-center space-x-2">
+                        {{-- <li>
+                            <a href="" class="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 flex items-center space-x-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                                 <span>FAQ</span>
                             </a>
-                        </li>
+                        </li> --}}
                         <li>
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 flex items-center space-x-2">
+                            <a href="https://www.pnb.ac.id/" class="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 flex items-center space-x-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                                 </svg>
-                                <span>Panduan</span>
+                                <span>Website Resmi PNB</span>
                             </a>
                         </li>
-                        <li>
+                        {{-- <li>
                             <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 flex items-center space-x-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                 </svg>
                                 <span>Kontak</span>
                             </a>
-                        </li>
+                        </li> --}}
                         <li>
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 flex items-center space-x-2">
+                            <a href="https://sipol.pnb.ac.id/" class="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 flex items-center space-x-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/>
                                 </svg>
@@ -215,7 +207,8 @@
                             </div>
                             <div>
                                 <p class="text-sm text-gray-900 dark:text-white font-medium">Alamat</p>
-                                <p class="text-xs text-gray-600 dark:text-gray-400">Jl. Universitas No. 123<br>Kampus Utama</p>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">Kampus Politeknik Negeri Bali, Bukit Jimbaran, Kuta Selatan, Badung, Bali<br>80361
+                                PO BOX 1064 Tuban</p>
                             </div>
                         </div>
 
@@ -227,7 +220,7 @@
                             </div>
                             <div>
                                 <p class="text-sm text-gray-900 dark:text-white font-medium">Email</p>
-                                <p class="text-xs text-gray-600 dark:text-gray-400">pkl@university.ac.id</p>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">poltek@pnb.ac.id</p>
                             </div>
                         </div>
 
@@ -239,7 +232,7 @@
                             </div>
                             <div>
                                 <p class="text-sm text-gray-900 dark:text-white font-medium">Telepon</p>
-                                <p class="text-xs text-gray-600 dark:text-gray-400">(021) 123-4567</p>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">+62 (0361)701981</p>
                             </div>
                         </div>
                     </div>
@@ -252,17 +245,17 @@
                         <p class="text-sm text-gray-600 dark:text-gray-400">
                             © {{date('Y')}} SIMAPKL. All rights reserved.
                         </p>
-                        <div class="hidden md:flex items-center space-x-4">
+                        {{-- <div class="hidden md:flex items-center space-x-4">
                             <a href="#" class="text-xs text-gray-500 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Privacy Policy</a>
                             <span class="text-gray-300 dark:text-gray-600">•</span>
                             <a href="#" class="text-xs text-gray-500 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">Terms of Service</a>
-                        </div>
+                        </div> --}}
                     </div>
 
                     <div class="flex items-center space-x-4">
                         <div class="flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
                             <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            <span class="text-xs text-gray-600 dark:text-gray-400 font-medium">v2.1.0</span>
+                            <span class="text-xs text-gray-600 dark:text-gray-400 font-medium">v 0.1</span>
                         </div>
 
                         <div class="flex items-center space-x-2">

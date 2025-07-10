@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Sistem Manajemen PKL Politeknik Negeri Bali - Memudahkan proses Praktik Kerja Lapangan untuk mahasiswa dan dosen">
     <title>SIMAPKL - Jurusan Teknologi Informasi</title>
-    <link rel="icon" href="https://www.pnb.ac.id/img/logo-pnb.3aae610b.png" sizes="32x32">
+    <link rel="icon" href="{{ asset('storage/img/logo-pnb.png') }}" sizes="32x32">
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -91,7 +91,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center space-x-3">
-                    <img src="https://www.pnb.ac.id/img/logo-pnb.3aae610b.png" 
+                    <img src="{{ asset('storage/img/logo-pnb.png') }}" 
                          alt="Logo PNB" 
                          class="h-8 w-auto">
                     <div class="hidden md:block">
@@ -99,18 +99,6 @@
                         <p class="text-xs text-gray-500 dark:text-gray-400">Politeknik Negeri Bali</p>
                     </div>
                 </div>
-                
-                {{-- <div class="flex items-center space-x-4">
-                    <button @click="darkMode = !darkMode" 
-                            class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                        <svg x-show="!darkMode" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                        </svg>
-                        <svg x-show="darkMode" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                        </svg>
-                    </button>
-                </div> --}}
             </div>
         </div>
     </nav>
@@ -119,24 +107,19 @@
     <section class="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <!-- Image Section -->
                 <div class="order-2 lg:order-1 animate-fade-left">
                     <div class="relative">
                         <div class="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-500 rounded-3xl transform rotate-3 opacity-20"></div>
-                        <div class="relative bg-gray-100 dark:bg-gray-800 rounded-3xl p-8 h-96 flex items-center justify-center">
-                            <!-- Placeholder untuk gambar -->
-                            <div class="text-center">
-                                <svg class="w-24 h-24 mx-auto text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                                <p class="text-gray-500 dark:text-gray-400">Tempat untuk gambar PKL</p>
-                                <p class="text-sm text-gray-400 dark:text-gray-500 mt-2">Ukuran yang disarankan: 800x600px</p>
-                            </div>
+                        <div class="relative bg-gray-100 dark:bg-gray-800 rounded-3xl p-8 h-96 flex items-center justify-center overflow-hidden">
+                            <img
+                                src="{{ asset('storage/img/gambar-magang-home.jpeg') }}" {{-- GANTI DENGAN PATH GAMBAR ANDA --}}
+                                alt="Gambar Praktik Kerja Lapangan"
+                                class="object-cover w-full h-full rounded-2xl"
+                            >
                         </div>
                     </div>
                 </div>
 
-                <!-- Content Section -->
                 <div class="order-1 lg:order-2 animate-fade-right">
                     <div class="space-y-6">
                         <div>
@@ -146,13 +129,13 @@
                                 <span class="gradient-text">PKL</span>
                             </h1>
                         </div>
-                        
+
                         <div class="space-y-4">
                             <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-                                Platform digital terpadu untuk mengelola seluruh proses Praktik Kerja Lapangan 
+                                Platform digital terpadu untuk mengelola seluruh proses Praktik Kerja Lapangan
                                 Jurusan Teknologi Informasi Politeknik Negeri Bali.
                             </p>
-                            
+
                             <div class="space-y-3">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-2 h-2 bg-green-500 rounded-full"></div>
@@ -160,7 +143,7 @@
                                 </div>
                                 <div class="flex items-center space-x-3">
                                     <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                                    <p class="text-gray-600 dark:text-gray-300">Komunikasi terintegrasi mahasiswa-dosen</p>
+                                    <p class="text-gray-600 dark:text-gray-300">Pengarsipan berkas seperti laporan dan dokumen</p>
                                 </div>
                                 <div class="flex items-center space-x-3">
                                     <div class="w-2 h-2 bg-green-500 rounded-full"></div>
@@ -176,7 +159,7 @@
                                 </svg>
                                 Login Mahasiswa
                             </a>
-                            
+
                             <a href="{{route('login.dospem')}}" class="inline-flex items-center justify-center px-8 py-3 bg-transparent hover:bg-green-50 dark:hover:bg-gray-800 text-green-600 dark:text-green-400 font-semibold rounded-xl border-2 border-green-500 transition-all duration-300 transform hover:scale-105">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
@@ -226,10 +209,10 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">
-                        Dashboard Monitoring
+                        Referensi Tempat Magang
                     </h3>
                     <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
-                        Pantau progress PKL secara real-time dengan dashboard yang informatif
+                        Tersedia beberapa mitra perusahaan dan posisi magang sebagai referensi
                     </p>
                 </div>
 
@@ -260,15 +243,15 @@
                     <p class="text-gray-600 dark:text-gray-300">Mahasiswa Aktif</p>
                 </div>
                 <div class="animate-fade-up" style="animation-delay: 0.2s">
-                    <div class="text-3xl md:text-4xl font-bold gradient-text mb-2">85+</div>
+                    <div class="text-3xl md:text-4xl font-bold gradient-text mb-2">20+</div>
                     <p class="text-gray-600 dark:text-gray-300">Dosen Pembimbing</p>
                 </div>
                 <div class="animate-fade-up" style="animation-delay: 0.3s">
-                    <div class="text-3xl md:text-4xl font-bold gradient-text mb-2">200+</div>
+                    <div class="text-3xl md:text-4xl font-bold gradient-text mb-2">50+</div>
                     <p class="text-gray-600 dark:text-gray-300">Perusahaan Mitra</p>
                 </div>
                 <div class="animate-fade-up" style="animation-delay: 0.4s">
-                    <div class="text-3xl md:text-4xl font-bold gradient-text mb-2">98%</div>
+                    <div class="text-3xl md:text-4xl font-bold gradient-text mb-2">81%</div>
                     <p class="text-gray-600 dark:text-gray-300">Tingkat Kepuasan</p>
                 </div>
             </div>
@@ -282,7 +265,7 @@
                 <!-- Logo & Description -->
                 <div class="md:col-span-2">
                     <div class="flex items-center space-x-3 mb-4">
-                        <img src="https://www.pnb.ac.id/img/logo-pnb.3aae610b.png" 
+                        <img src="{{ asset('storage/img/logo-pnb.png') }}" 
                              alt="Logo PNB" 
                              class="h-10 w-auto">
                         <div>
@@ -317,10 +300,10 @@
                 <div>
                     <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
                     <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Beranda</a></li>
-                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Login Mahasiswa</a></li>
-                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Login Dosen</a></li>
-                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Panduan PKL</a></li>
+                        <li><a href="{{route('welcome')}}" class="text-gray-300 hover:text-white transition-colors">Beranda</a></li>
+                        <li><a href="{{route('login.mahasiswa')}}" class="text-gray-300 hover:text-white transition-colors">Login Mahasiswa</a></li>
+                        <li><a href="{{route('login.dospem')}}" class="text-gray-300 hover:text-white transition-colors">Login Dosen</a></li>
+                        {{-- <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Panduan PKL</a></li> --}}
                     </ul>
                 </div>
 
@@ -333,19 +316,20 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                             </svg>
-                            <span class="text-gray-300 text-sm">Jl. Kampus Bukit Jimbaran, Kuta Selatan, Badung</span>
+                            <span class="text-gray-300 text-sm">Kampus Politeknik Negeri Bali, Bukit Jimbaran, Kuta Selatan, Badung, Bali<br>80361
+                                PO BOX 1064 Tuban</span>
                         </li>
                         <li class="flex items-center space-x-2">
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                             </svg>
-                            <span class="text-gray-300 text-sm">pkl@pnb.ac.id</span>
+                            <span class="text-gray-300 text-sm">poltek@pnb.ac.id</span>
                         </li>
                         <li class="flex items-center space-x-2">
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                             </svg>
-                            <span class="text-gray-300 text-sm">(0361) 701981</span>
+                            <span class="text-gray-300 text-sm">+62 (0361)701981</span>
                         </li>
                     </ul>
                 </div>
@@ -353,4 +337,4 @@
 
             <div class="border-t border-gray-800 mt-8 pt-8 text-center">
                 <p class="text-gray-400 text-sm">
-                    © 2024 SIMAPKL - Jurusan Teknologi Informasi Politeknik
+                    © {{date('Y')}} - Jurusan Teknologi Informasi - Politeknik Negeri Bali

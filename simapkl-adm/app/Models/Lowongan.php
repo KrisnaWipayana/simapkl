@@ -15,9 +15,14 @@ class Lowongan extends Model
         'deskripsi',
         'tanggal_mulai',
         'tanggal_selesai',
+        'expired',
+        'kuota',
     ];
     public function perusahaan(): BelongsTo
     {
         return $this->belongsTo(Perusahaan::class);
+    }
+    public function skills() {
+        return $this->belongsToMany(Skill::class, 'lowongan_skill');
     }
 }
